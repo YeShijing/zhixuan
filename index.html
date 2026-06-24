@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智选 SmartPick · 大学生科创选题助手</title>
+    <style>
+        /* 全局重置 */
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", "Microsoft YaHei", sans-serif; }
+        
+        body {
+            background-color: #f8fafc;
+            color: #1e293b;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* 主容器 */
+        #app-container {
+            width: 100%;
+            max-width: 1280px; 
+            padding: 0 40px 60px 40px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page { display: flex; flex-direction: column; width: 100%; }
+        .hidden { display: none !important; }
+
+        /* 顶部导航 */
+        .global-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 24px 0;
+            border-bottom: 1px solid #e2e8f0;
+            margin-bottom: 60px;
+        }
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 24px;
+            font-weight: 700;
+            color: #1e293b;
+            text-decoration: none;
+        }
+        .brand-logo span {
+            background: #1E80FF;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 16px;
+            letter-spacing: 1px;
+        }
+        .nav-links { display: flex; gap: 24px; align-items: center; }
+        .nav-btn {
+            padding: 8px 20px;
+            background: #e2e8f0;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #475569;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+        .nav-btn:hover { background: #1E80FF; color: white; }
+
+        /* 主页视觉区 */
+        .hero-text {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        .hero-text h1 {
+            font-size: 48px;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 16px;
+            letter-spacing: -1px;
+        }
+        .hero-text h1 .highlight { color: #1E80FF; }
+        .hero-text p {
+            font-size: 18px;
+            color: #64748b;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* 三核心功能卡 */
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-bottom: 80px;
+        }
+        .menu-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            padding: 32px 24px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+        }
+        .menu-card:hover {
+            transform: translateY(-4px);
+            border-color: #1E80FF;
+            box-shadow: 0 12px 32px rgba(30, 128, 255, 0.10);
+        }
+        .menu-card .icon-area { font-size: 40px; margin-bottom: 16px; }
+        .menu-card h3 { font-size: 20px; color: #0f172a; margin-bottom: 8px; font-weight: 600; }
+        .menu-card p { font-size: 15px; color: #64748b; line-height: 1.5; margin-bottom: 20px; flex-grow: 1; }
+        .menu-card .arrow-link {
+            color: #1E80FF;
+            font-weight: 500;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        /* 底部平铺区 */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 3fr 2fr;
+            gap: 40px;
+        }
+        .section-title { font-size: 20px; font-weight: 600; color: #0f172a; margin-bottom: 20px; display: flex; align-items: center; gap: 10px;}
+
+        .competition-card {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px 24px;
+            margin-bottom: 16px;
+            border-left: 4px solid #1E80FF;
+            transition: 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .competition-card:hover { background: #f8fafc; }
+        .competition-card h4 { font-size: 16px; font-weight: 600; color: #0f172a; margin-bottom: 4px; }
+        .competition-card p { font-size: 14px; color: #64748b; line-height: 1.5; }
+        .competition-card .meta { margin-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
+        .competition-card .tag {
+            background: #f1f5f9;
+            padding: 2px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            color: #475569;
+        }
+
+        .stone-list-item {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 16px; background: #ffffff; border-radius: 8px;
+            margin-bottom: 10px; cursor: pointer; transition: 0.2s; border: 1px solid #e2e8f0;
+        }
+        .stone-list-item:hover { border-color: #1E80FF; }
+        .stone-list-item .text { font-size: 14px; color: #334155; font-weight: 500; }
+        .stone-list-item .download-btn { color: #1E80FF; font-size: 13px; font-weight: 500; }
+
+        /* AI 页面 */
+        #page-ai { padding: 0; height: 85vh; border: 1px solid #e2e8f0; border-radius: 16px; overflow: hidden; background: white; display: flex; flex-direction: column;}
+        #page-ai iframe { width: 100%; height: 100%; border: none; flex: 1; }
+
+        /* 响应式 */
+        @media screen and (max-width: 900px) {
+            .menu-grid { grid-template-columns: 1fr; }
+            .content-grid { grid-template-columns: 1fr; }
+            #app-container { padding: 0 20px 40px 20px; }
+            .global-header { flex-direction: column; align-items: flex-start; gap: 16px; margin-bottom: 30px; }
+            .hero-text h1 { font-size: 32px; }
+            .hero-text p { font-size: 16px; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+
+    <!-- 1. 顶部导航 -->
+    <div class="global-header">
+        <div class="brand-logo">
+            🧠 <span>智选</span> SmartPick
+        </div>
+        <div class="nav-links">
+            <div class="nav-btn" onclick="goToPage('page-stone')">📚 优秀案例</div>
+            <div class="nav-btn" onclick="goToAiPage()" style="background: #1E80FF; color: white; border: none;">🤖 开始咨询</div>
+        </div>
+    </div>
+
+    <!-- 2. 主页面 -->
+    <div id="page-home" class="page">
+        <div class="hero-text">
+            <h1>开启你的 <span class="highlight">科创探索</span></h1>
+            <p>大学生创新创业训练计划、挑战杯、互联网+。用最快的方式，找到最适合你的科研起点。</p>
+        </div>
+        
+        <div class="menu-grid">
+            <div class="menu-card" onclick="goToAiPage()">
+                <div class="icon-area">🤖</div>
+                <h3>智能选题顾问</h3>
+                <p>AI 多轮对话引导，量身定制你的科创方向。</p>
+                <div class="arrow-link">开始定制 →</div>
+            </div>
+            
+            <div class="menu-card" onclick="goToPage('page-competition')">
+                <div class="icon-area">📅</div>
+                <h3>重要赛事日历</h3>
+                <p>大创、挑战杯、互联网+，重要时间节点一目了然。</p>
+                <div class="arrow-link">查看时间线 →</div>
+            </div>
+            
+            <div class="menu-card" onclick="goToPage('page-stone')">
+                <div class="icon-area">📚</div>
+                <h3>他山之石</h3>
+                <p>覆盖全国重点师范院校的往届优秀立项名录下载。</p>
+                <div class="arrow-link">下载数据 →</div>
+            </div>
+        </div>
+
+        <!-- 底部内容 -->
+        <div class="content-grid">
+            <div>
+                <div class="section-title">📌 近期赛事关注</div>
+                <div class="competition-card" style="border-left-color: #e67e22; cursor: pointer;" onclick="goToPage('page-competition')">
+                    <h4>中国国际大学生创新大赛</h4>
+                    <p>原“互联网+”大赛，预计周期：6月 - 次年10月</p>
+                </div>
+                <div class="competition-card" style="border-left-color: #1E80FF; cursor: pointer;" onclick="goToPage('page-competition')">
+                    <h4>“挑战杯”全国大学生课外学术科技作品竞赛</h4>
+                    <p>预计周期：11月 - 次年5月</p>
+                </div>
+            </div>
+
+            <div>
+                <div class="section-title">📂 热门数据下载</div>
+                <div class="stone-list-item" onclick="triggerDownload('北京师范大学(25年)')">
+                    <div class="text">北京师范大学 · 25年国创/市创/校创</div>
+                    <div class="download-btn">下载</div>
+                </div>
+                <div class="stone-list-item" onclick="triggerDownload('南京师范大学(25年)')">
+                    <div class="text">南京师范大学 · 25年国创/省级/校级</div>
+                    <div class="download-btn">下载</div>
+                </div>
+                <div class="stone-list-item" onclick="triggerDownload('广西师范大学(25年)')">
+                    <div class="text">广西师范大学 · 25年国创/省级大创</div>
+                    <div class="download-btn">下载</div>
+                </div>
+                <div class="stone-list-item" onclick="triggerDownload('华东师范大学(25年)')">
+                    <div class="text">华东师范大学 · 25年国创/研习</div>
+                    <div class="download-btn">下载</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 隐藏页面：AI 智能体 ================= -->
+    <div id="page-ai" class="page hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 20px; border-bottom: 1px solid #e2e8f0; background: white; flex-shrink: 0;">
+            <div style="font-weight: 600; color: #1e293b; display: flex; align-items: center; gap: 10px;">
+                <span style="cursor: pointer; color: #1E80FF; font-size: 22px;" onclick="goBack()">‹</span>
+                <span>🤖 智能选题顾问</span>
+            </div>
+        </div>
+        <iframe id="dify-chat-iframe" src="" allow="microphone"></iframe>
+    </div>
+
+    <!-- ================= 隐藏页面：赛事日历 ================= -->
+    <div id="page-competition" class="page hidden" style="padding-top: 20px;">
+        <div style="display: flex; align-items: center; margin-bottom: 24px;">
+            <span style="font-size: 24px; cursor: pointer; color: #1E80FF; margin-right: 16px;" onclick="goBack()">‹</span>
+            <h2 style="font-size: 24px; color: #0f172a;">📅 重要赛事日历</h2>
+        </div>
+        <div style="color: #64748b; margin-bottom: 20px;">点击下方卡片，查看赛事简介与官方报名官网。</div>
+        
+        <div class="competition-card" style="border-left-color: #e67e22; cursor: pointer;" onclick="openModal('modal-internet-plus')">
+            <h4>中国国际大学生创新大赛</h4>
+            <p style="margin-top: 4px; font-size: 13px; color: #e67e22;">📌 预计周期：6月 - 次年10月</p>
+            <div class="meta">
+                <span class="tag" style="color:#e67e22;">校级初赛: 6月</span>
+                <span class="tag" style="color:#e67e22;">省级复赛: 8月</span>
+                <span class="tag" style="color:#e67e22;">全国总决赛: 10月</span>
+            </div>
+        </div>
+
+        <div class="competition-card" style="border-left-color: #1E80FF; cursor: pointer;" onclick="openModal('modal-challenge-cup')">
+            <h4>“挑战杯”全国大学生课外学术科技作品竞赛</h4>
+            <p style="margin-top: 4px; font-size: 13px; color: #1E80FF;">📌 预计周期：11月 - 次年5月</p>
+            <div class="meta">
+                <span class="tag">校级初赛: 3-4月</span>
+                <span class="tag">省级复赛: 5月</span>
+                <span class="tag">全国决赛: 10-11月</span>
+            </div>
+        </div>
+
+        <div class="competition-card" style="border-left-color: #27ae60; cursor: pointer;" onclick="openModal('modal-dachuang')">
+            <h4>大学生创新创业训练计划</h4>
+            <p style="margin-top: 4px; font-size: 13px; color: #27ae60;">📌 预计周期：4月 - 次年5月</p>
+            <div class="meta">
+                <span class="tag" style="color:#27ae60;">项目申报: 4-5月</span>
+                <span class="tag" style="color:#27ae60;">立项公示: 6月</span>
+                <span class="tag" style="color:#27ae60;">结题验收: 次年 5月</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 弹窗：赛事详情 ================= -->
+    <div id="modal-internet-plus" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center; backdrop-filter:blur(4px);">
+        <div style="background:white; max-width:600px; width:90%; border-radius:20px; padding:30px; position:relative; max-height:80vh; overflow-y:auto;">
+            <span onclick="closeModal('modal-internet-plus')" style="position:absolute; top:15px; right:20px; font-size:28px; cursor:pointer; color:#64748b;">&times;</span>
+            <h3 style="margin-bottom:15px; font-size:22px; color:#0f172a;">中国国际大学生创新大赛</h3>
+            <div style="margin-bottom:15px; border-left:4px solid #e67e22; padding-left:12px; background:#f8fafc; border-radius:6px; padding:12px;">
+                <p style="font-size:14px; line-height:1.6; color:#334155;"><b>赛事简介：</b>教育部等12个部门共同主办，是目前国内覆盖面最广、影响力最大的大学生创新创业顶级赛事。旨在深化高等教育综合改革，激发大学生创造力。</p>
+            </div>
+            <div style="margin-bottom:20px;">
+                <p style="font-size:14px; color:#64748b; margin-bottom:6px;"><b>核心时间节点（参考往年）：</b></p>
+                <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                    <span class="tag" style="border:1px solid #e67e22; color:#e67e22;">校赛/报名: 6月</span>
+                    <span class="tag" style="border:1px solid #e67e22; color:#e67e22;">省赛: 8月</span>
+                    <span class="tag" style="border:1px solid #e67e22; color:#e67e22;">国赛: 10月</span>
+                </div>
+            </div>
+            <a href="https://cy.ncss.cn/" target="_blank" style="display:inline-block; padding:10px 20px; background:#1E80FF; color:white; text-decoration:none; border-radius:8px; font-weight:500;">👉 前往全国大学生创业服务网 (官网)</a>
+        </div>
+    </div>
+
+    <div id="modal-challenge-cup" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center; backdrop-filter:blur(4px);">
+        <div style="background:white; max-width:600px; width:90%; border-radius:20px; padding:30px; position:relative; max-height:80vh; overflow-y:auto;">
+            <span onclick="closeModal('modal-challenge-cup')" style="position:absolute; top:15px; right:20px; font-size:28px; cursor:pointer; color:#64748b;">&times;</span>
+            <h3 style="margin-bottom:15px; font-size:22px; color:#0f172a;">“挑战杯”全国大学生课外学术科技作品竞赛</h3>
+            <div style="margin-bottom:15px; border-left:4px solid #1E80FF; padding-left:12px; background:#f8fafc; border-radius:6px; padding:12px;">
+                <p style="font-size:14px; line-height:1.6; color:#334155;"><b>赛事简介：</b>由共青团中央、中国科协、教育部等共同主办。被誉为中国大学生学术科技的“奥林匹克”。侧重学术研究、发明创造，与社会热点紧密结合。</p>
+            </div>
+            <div style="margin-bottom:20px;">
+                <p style="font-size:14px; color:#64748b; margin-bottom:6px;"><b>核心时间节点（参考往年）：</b></p>
+                <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                    <span class="tag">校赛: 3-4月</span>
+                    <span class="tag">省赛: 5月</span>
+                    <span class="tag">国赛: 10-11月</span>
+                </div>
+            </div>
+            <a href="https://www.tiaozhanbei.net/" target="_blank" style="display:inline-block; padding:10px 20px; background:#1E80FF; color:white; text-decoration:none; border-radius:8px; font-weight:500;">👉 前往挑战杯官网</a>
+        </div>
+    </div>
+
+    <div id="modal-dachuang" class="modal-overlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:1000; justify-content:center; align-items:center; backdrop-filter:blur(4px);">
+        <div style="background:white; max-width:600px; width:90%; border-radius:20px; padding:30px; position:relative; max-height:80vh; overflow-y:auto;">
+            <span onclick="closeModal('modal-dachuang')" style="position:absolute; top:15px; right:20px; font-size:28px; cursor:pointer; color:#64748b;">&times;</span>
+            <h3 style="margin-bottom:15px; font-size:22px; color:#0f172a;">大学生创新创业训练计划</h3>
+            <div style="margin-bottom:15px; border-left:4px solid #27ae60; padding-left:12px; background:#f8fafc; border-radius:6px; padding:12px;">
+                <p style="font-size:14px; line-height:1.6; color:#334155;"><b>赛事简介：</b>教育部“高等学校本科教学质量与教学改革工程”重点建设项目。旨在通过资助大学生开展创新训练、创业训练和创业实践，提升大学生的创新能力和创业能力。</p>
+            </div>
+            <div style="margin-bottom:20px;">
+                <p style="font-size:14px; color:#64748b; margin-bottom:6px;"><b>核心时间节点（参考往年）：</b></p>
+                <div style="display:flex; flex-wrap:wrap; gap:8px;">
+                    <span class="tag" style="color:#27ae60;">项目申报: 4-5月</span>
+                    <span class="tag" style="color:#27ae60;">立项公示: 6月</span>
+                    <span class="tag" style="color:#27ae60;">结题验收: 次年 5月</span>
+                </div>
+            </div>
+            <div style="margin-top:20px; padding:12px; background:#f1f5f9; border-radius:8px; color:#64748b; font-size:14px; border:1px dashed #cbd5e1;">
+                ⚠️ 注：大创目前暂无全国统一报名官网，具体申报时间与入口以 <b>所在学校教务处 / 创新创业学院</b> 官方通知为准。
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= 隐藏页面：他山之石（全量数据） ================= -->
+    <div id="page-stone" class="page hidden" style="padding-top: 20px;">
+        <div style="display: flex; align-items: center; margin-bottom: 24px;">
+            <span style="font-size: 24px; cursor: pointer; color: #1E80FF; margin-right: 16px;" onclick="goBack()">‹</span>
+            <h2 style="font-size: 24px; color: #0f172a;">📚 他山之石</h2>
+        </div>
+        <div style="color: #64748b; margin-bottom: 20px;">点击下载，获取整理好的往届立项列表。</div>
+        
+        <!-- 25年数据（旧，已完成） -->
+        <div class="stone-list-item" onclick="triggerDownload('华东师范大学(25年)')">
+            <div class="text">华东师范大学 · 25年国创/研习项目</div>
+            <div class="download-btn" style="color: #1E80FF;">下载</div>
+        </div>
+        <div class="stone-list-item" onclick="triggerDownload('广西师范大学(25年)')">
+            <div class="text">广西师范大学 · 25年国创/省级大创</div>
+            <div class="download-btn" style="color: #1E80FF;">下载</div>
+        </div>
+        <div class="stone-list-item" onclick="triggerDownload('西南大学(25年)')">
+            <div class="text">西南大学 · 25年校级/红旅项目</div>
+            <div class="download-btn" style="color: #1E80FF;">下载</div>
+        </div>
+        <div class="stone-list-item" onclick="triggerDownload('北京师范大学(25年)')">
+            <div class="text">北京师范大学 · 25年国创/市创/校创</div>
+            <div class="download-btn" style="color: #1E80FF;">下载</div>
+        </div>
+        <div class="stone-list-item" onclick="triggerDownload('杭州师范大学(25年)')">
+            <div class="text">杭州师范大学 · 25年国创/省级</div>
+            <div class="download-btn" style="color: #1E80FF;">下载</div>
+        </div>
+        <div class="stone-list-item" onclick="triggerDownload('华南师范大学(25年)')">
+            <div class="text">华南师范大学 · 25年国创/省级/校级</div>
+            <div class="download-btn" style="color: #1E80FF;">下载</div>
+        </div>
+        <div class="stone-list-item" onclick="triggerDownload('华中师范大学(25年)')">
+            <div class="text">华中师范大学 · 25年创新训练项目</div>
+            <div class="download-btn" style="color: #1E80FF;">下载</div>
+        </div>
+        <div class="stone-list-item" onclick="triggerDownload('南京师范大学(25年)')">
+            <div class="text">南京师范大学 · 25年国创/省级/校级</div>
+            <div class="download-btn" style="color: #1E80FF;">下载</div>
+        </div>
+        <div class="stone-list-item" onclick="triggerDownload('浙江大学(25年)')">
+            <div class="text">浙江大学 · 25年国创项目</div>
+            <div class="download-btn" style="color: #1E80FF;">下载</div>
+        </div>
+
+        <!-- 24年数据（新，7所学校） -->
+        <div style="margin-top: 25px; margin-bottom: 15px; font-weight: 600; color: #0f172a; border-top: 1px solid #e2e8f0; padding-top: 15px;">2024年大创数据</div>
+        
+        <div class="stone-list-item" onclick="triggerDownload('西南大学(24年)')">
+            <div class="text">西南大学 · 24年国创/市级/校级</div>
+            <div class="download-btn" style="color: #1E80FF;">下载</div>
+        </div>
+        <div class="stone-list-item" onclick="triggerDownload('华东师范大学(24年)')">
+            <div class="text">华东师范大学 · 24年国创/市级/校级</div>
+            <div class="download-btn" style="color: #1E80FF;">下载</div>
+        </div>
+        <div class="stone-list-item" onclick="triggerDownload('南京师范大学(24年)')">
+            <div class="text">南京师范大学 · 24年国创/省级/校级</div>
+            <div class="download-btn" style="color: #1E80FF;">下载</div>
+        </div>
+        <div class="stone-list-item" onclick="triggerDownload('杭州师范大学(24年)')">
+            <div class="text">杭州师范大学 · 24年国创/省级</div>
+            <div class="download-btn" style="color: #1E80FF;">下载</div>
+        </div>
+        <div class="stone-list-item" onclick="triggerDownload('广西师范大学(24年)')">
+            <div class="text">广西师范大学 · 24年国创/自治区级</div>
+            <div class="download-btn" style="color: #1E80FF;">下载</div>
+        </div>
+        <div class="stone-list-item" onclick="triggerDownload('浙江大学(24年)')">
+            <div class="text">浙江大学 · 24年国创项目</div>
+            <div class="download-btn" style="color: #1E80FF;">下载</div>
+        </div>
+        <div class="stone-list-item" onclick="triggerDownload('北京师范大学(24年)')">
+            <div class="text">北京师范大学 · 24年国创/市级/校级</div>
+            <div class="download-btn" style="color: #1E80FF;">下载</div>
+        </div>
+
+    </div>
+
+</div>
+
+<script>
+    // === 全量数据对象（25年旧数据 + 24年新数据） ===
+    const projectData = {
+
+        // ================= 25年数据（原有） =================
+        "华东师范大学(25年)": [
+            ["项目编号", "项目名称", "项目类型", "所属院系", "项目负责人所在专业", "关注的方向", "具体的细分方向"],
+            ["202610269040G", "基于阅读成分理论的学习困难儿童多模态干预课程的开发与运用", "教育研习项目", "教育学部", "教育学类", "E. 学前教育与特殊教育", "E3. 特殊儿童融合教育 / E4. 康复训练与辅助技术"],
+            ["202610269041G", "家校合作何以影响家长教育焦虑——基于潜在剖面的多组别比较分析", "创新训练项目", "教育学部", "教育学类", "G. 家庭教育与社区教育", "G1. 家校合作与沟通 / G2. 家庭教育指导"],
+            ["202610269042G", "面向牙科工作者的选择性降噪耳塞研发与基于智能设备的实时噪声监测平台", "创新训练项目", "教育学部", "听力与言语康复学", "E. 学前教育与特殊教育", "E4. 康复训练与辅助技术"],
+            ["202610269043G", "AI支持的自适应编程智能导学系统设计与开发", "创新训练项目", "教育学部", "教育技术学", "A. 教育技术与人工智能", "A1. AI辅助教学 / A6. 编程教育与计算思维"],
+            ["202610269044G", "西部地区学前教师融合教育专业素养现状及需求调查", "创新训练项目", "教育学部", "教育学类", "E. 学前教育与特殊教育", "E3. 特殊儿童融合教育 / E5. 特殊教育师资培养"],
+            ["202610269045G", "音波疗心：基于歌单建构的高中生艺术疗愈支持计划", "创新训练项目", "教育学部", "艺术教育", "C. 教育心理与发展", "C6. 心理健康教育 / C3. 情绪与社会性发展"],
+            ["202610269046G", "人工智能大语言模型赋能的语文作文评估研究", "创新训练项目", "教育学部", "教育技术学", "A. 教育技术与人工智能", "A1. AI辅助教学"],
+            ["202610269047G", "信奥师资基础教学课程研发", "创新训练项目", "教育学部", "教育技术学", "A. 教育技术与人工智能", "A6. 编程教育与计算思维"],
+            ["202610269048G", "智融无碍，博育未来——基于教师赋能的培智学生博物馆教育数智融合创新", "创新训练项目", "教育学部", "教育学类", "E. 学前教育与特殊教育", "E3. 特殊儿童融合教育 / E5. 特殊教育师资培养"],
+            ["202610269049G", "万物“密”联——边缘计算设备下的“加密微芯”产业化及其应用", "创业训练项目", "教育学部", "特殊教育", "A. 教育技术与人工智能", "A7. 教育信息化政策与基础设施"]
+        ],
+        "广西师范大学(25年)": [
+            ["所属学院", "项目编号", "项目名称", "项目类型", "项目级别", "项目期限", "关注的方向", "具体的细分方向"],
+            ["教育学部", "X2025106020111", "AI赋能的4-6岁儿童职业启蒙教育多模态交互智能绘本设计开发研究", "创新训练", "国家级", "一年期", "A. 教育技术与人工智能", "A4. 虚拟现实/增强现实教育应用 / A5. 教育游戏与游戏化学习"],
+            ["教育学部", "X2025106020109", "侗韵童语——基于AI声调解码的侗族大歌儿童音乐游戏开发", "创新训练", "国家级", "一年期", "A. 教育技术与人工智能", "A5. 教育游戏与游戏化学习 / A1. AI辅助教学"],
+            ["教育学部", "X2025106020121", "非遗解码计划：六甲刺绣纹样的传承发展和教育转化", "创新训练", "国家级", "一年期", "B. 课程与教学论", "B3. 课程标准与教材分析"],
+            ["教育学部", "X2025106020117", "刘三姐AI文化宣传大使的人工智能项目开发与实践研究", "创新训练", "国家级", "一年期", "H. 其他新兴/交叉领域", "H5. 跨文化教育"],
+            ["教育学部", "X2025106020115", "织网者计划：对校园欺凌说“NO”", "创新训练", "国家级", "一年期", "C. 教育心理与发展", "C3. 情绪与社会性发展 / C6. 心理健康教育"],
+            ["教育学部", "X2025106020112", "融美共生：广西边境非遗文化铸牢中华民族共同体意识的学校育人典型模式探析", "创新训练", "国家级", "一年期", "H. 其他新兴/交叉领域", "H5. 跨文化教育 / B4. 教学模式改革"],
+            ["教育学部", "S202210602155", "“疫”纸家书——疫情防控背景下借助自媒体平台促进学前儿童家庭心理健康的研究", "创新训练", "省级", "二年期", "G. 家庭教育与社区教育", "G2. 家庭教育指导 / C6. 心理健康教育"],
+            ["教育学部", "X2025106020108", "童趣自然行：五感驱动的自然教育创新平台", "创业训练", "省级", "一年期", "H. 其他新兴/交叉领域", "H2. 环境教育与可持续发展 / H1. 劳动教育与综合实践"],
+            ["教育学部", "X2025106020110", "山水共生：共生教育理念下小学研学课程资源的实践研究", "创新训练", "省级", "一年期", "H. 其他新兴/交叉领域", "H1. 劳动教育与综合实践"],
+            ["教育学部", "X2025106020116", "传染病威胁促使人与自然和谐共生？——基于人类中心主义视角下的多层次调查研究", "创新训练", "省级", "一年期", "H. 其他新兴/交叉领域", "H2. 环境教育与可持续发展"],
+            ["教育学部", "X2025106020126", "共生视域下广西特殊需要儿童人际支持的行动研究—基于主题活动的协同", "创新训练", "省级", "一年期", "E. 学前教育与特殊教育", "E3. 特殊儿童融合教育"],
+            ["教育学部", "X2025106020114", "广西疍家饮食文化融入幼儿园角色游戏：理论分析与实践优化研究——以北海市C幼儿园为例", "创新训练", "省级", "一年期", "E. 学前教育与特殊教育", "E1. 幼儿园课程与游戏"],
+            ["教育学部", "X2025106020118", "核心素养视域下数学文化融入小学教学的路径研究——以桂林Z小学为例", "创新训练", "省级", "一年期", "B. 课程与教学论", "B1. 学科教学法创新 / B2. 核心素养培养"],
+            ["教育学部", "X2025106020119", "家校社协同下非遗手工疗愈对孤独症儿童的社交支持", "创新训练", "省级", "一年期", "E. 学前教育与特殊教育", "E3. 特殊儿童融合教育 / E4. 康复训练与辅助技术"],
+            ["教育学部", "S202410602085", "个体与群体排斥情境下大学生对情绪面孔注意偏向的影响", "创新训练", "省级", "二年期", "C. 教育心理与发展", "C3. 情绪与社会性发展"],
+            ["教育学部", "X2025106020122", "面向创造力培养的小学C-STEAM校本课程的开发与实践研究", "创新训练", "省级", "一年期", "B. 课程与教学论", "B1. 学科教学法创新 / B2. 核心素养培养 / B4. 教学模式改革"],
+            ["教育学部", "X2025106020127", "面向小学生的航空航天职业科普资源的设计与开发研究", "创新训练", "省级", "一年期", "B. 课程与教学论", "B3. 课程标准与教材分析 / B2. 核心素养培养"],
+            ["教育学部", "X2025106020124", "青航——线上线下融合的高中生生涯探索与规划体验式桌游开发", "创新训练", "省级", "一年期", "A. 教育技术与人工智能", "A2. 在线教育与混合式教学 / A5. 教育游戏与游戏化学习"],
+            ["教育学部", "S202410602089", "青少年非自杀性自伤情绪调节缺陷及其机制:内隐联结与注意偏向", "创新训练", "省级", "一年期", "C. 教育心理与发展", "C3. 情绪与社会性发展 / C6. 心理健康教育"],
+            ["教育学部", "X2025106020120", "青航心语——赋能乡村初中生青春期心理成长的系列微课研发与应用", "创新训练", "省级", "一年期", "C. 教育心理与发展", "C6. 心理健康教育 / D1. 教育公平与均衡发展 / A2. 在线教育与混合式教学"],
+            ["教育学部", "S202410602092", "当代大学生的心理贫困：结构内涵、现状与干预", "创新训练", "省级", "二年期", "C. 教育心理与发展", "C6. 心理健康教育"],
+            ["教育学部", "X2025106020125", "舞动心桥——高中生焦虑问题的舞动团体辅导实践研究", "创新训练", "省级", "一年期", "C. 教育心理与发展", "C3. 情绪与社会性发展 / C6. 心理健康教育"],
+            ["教育学部", "X2025106020113", "习之有道：教联体背景下对于9-12岁儿童学习习惯的微课研发", "创新训练", "省级", "一年期", "A. 教育技术与人工智能", "A2. 在线教育与混合式教学 / C2. 认知发展与学习策略"],
+            ["教育学部", "X2025106020123", "知音教育——做有温度的广西乡村地区特殊儿童家庭教育指导平台", "创新训练", "省级", "一年期", "E. 学前教育与特殊教育", "E3. 特殊儿童融合教育"],
+            ["教育学部", "X2025106020128", "“古鸡声声唤晨曦，田园事事醉心扉”——“田园鸡趣”综合农旅营地", "创业训练", "省级", "一年期", "H. 其他新兴/交叉领域", "H1. 劳动教育与综合实践"],
+            ["教育学部", "X2025106020129", "星剧会·大学生交友创想营", "创业训练", "省级", "一年期", "C. 教育心理与发展", "C3. 情绪与社会性发展 / C6. 心理健康教育"]
+        ],
+        "西南大学(25年)": [
+            ["编号", "所属学院", "项目级别", "项目名称", "项目类型", "项目类别", "关注的方向", "具体的细分方向"],
+            ["105", "教育学部", "校级", "“乡村教育联结者”双师直播课堂", "创业训练项目", "一般项目", "A. 教育技术与人工智能", "A2. 在线教育与混合式教学"],
+            ["144", "教育学部", "校级", "大学生网络游戏卷入与学业表现关系的机理与策略研究——主观幸福感的调节效应", "创新训练项目", "一般项目", "C. 教育心理与发展", "C1. 学习动机与engagement / C2. 认知发展与学习策略 / C6. 心理健康教育"],
+            ["204", "教育学部", "校级", "鸿蒙“启学”软件——大模型驱动的个性化学习生态系统", "创业实践项目", "一般项目", "A. 教育技术与人工智能", "A1. AI辅助教学"],
+            ["323", "教育学部", "校级", "从符号到共情：世界反法西斯战争中儿童英雄形象的教材建构研究", "创新训练项目", "一般项目", "B. 课程与教学论", "B3. 课程标准与教材分析"],
+            ["383", "教育学部", "校级", "生命播种计划：社区心灵成长驿站", "创新训练项目", "红旅专项项目", "G. 家庭教育与社区教育", "G4. 社区教育资源整合"],
+            ["405", "教育学部", "校级", "大学生 Gen AI 应用风险全景解析与精准应对：矩阵模型驱动的策略探索", "创新训练项目", "一般项目", "H. 其他新兴/交叉领域", "H4. 教育哲学与伦理"],
+            ["455", "教育学部", "校级", "乐言乐制：STEAM+外语教育智慧学习环境设计与开发", "创业训练项目", "一般项目", "A. 教育技术与人工智能", "A1. AI辅助教学 / A2. 在线教育与混合式教学 / A6. 编程教育与计算思维"],
+            ["496", "教育学部", "校级", "从理解到执行：创新扩散理论视域下教师新课标落实的路径探索——基于小学数学教师的实证调查研究", "创新训练项目", "一般项目", "B. 课程与教学论", "B3. 课程标准与教材分析 / B1. 学科教学法创新"],
+            ["557", "教育学部", "校级", "数学思维范式迁移研究——拔尖人才创新能力培养的跨学科协同机制", "创新训练项目", "一般项目", "B. 课程与教学论", "B1. 学科教学法创新 / B2. 核心素养培养 / B4. 教学模式改革"],
+            ["610", "教育学部", "校级", "分秒智教——乡村儿童智能问答教育平台构建与公益实践", "创新训练项目", "红旅专项项目", "A. 教育技术与人工智能", "A1. AI辅助教学 / D1. 教育公平与均衡发展"],
+            ["646", "教育学部", "校级", "基于Deepseek的大学生深度学习模式研究", "创新训练项目", "一般项目", "A. 教育技术与人工智能", "A1. AI辅助教学"],
+            ["662", "教育学部", "校级", "智汇未来：教育家精神传承虚拟博物馆", "创新训练项目", "一般项目", "A. 教育技术与人工智能", "A4. 虚拟现实/增强现实教育应用"],
+            ["676", "教育学部", "校级", "心桥（HeartBridge）——家校共育下中小学多相欺凌角色数字识别与智能决策构建研究", "创新训练项目", "一般项目", "C. 教育心理与发展", "C3. 情绪与社会性发展 / C6. 心理健康教育"],
+            ["681", "教育学部", "校级", "信息时代下师范生数字化教学胜任力研究与提升路径———基于教育实习的实证探索", "创新训练项目", "一般项目", "F. 教师教育与专业成长", "F1. 师范生培养模式"],
+            ["700", "教育学部", "校级", "供求视角下职业教育与劳动力市场的技能匹配研究——以智能时代面向低幼的服务业为例", "创新训练项目", "一般项目", "D. 教育管理与政策", "D5. 教育政策分析"],
+            ["791", "教育学部", "校级", "大学生使用DeepSeek的依赖水平测度及干预方案研究", "创新训练项目", "一般项目", "A. 教育技术与人工智能", "A3. 教育大数据与学习分析"],
+            ["903", "教育学部", "校级", "人工智能支持下乡村教师跨学科教学的减负效应研究", "创新训练项目", "红旅专项项目", "A. 教育技术与人工智能", "A1. AI辅助教学 / A7. 教育信息化政策与基础设施"],
+            ["1035", "教育学部", "校级", "基于多智能体协同的大学生认知AI污染动态监测与教育干预研究", "创新训练项目", "一般项目", "A. 教育技术与人工智能", "A1. AI辅助教学 / A3. 教育大数据与学习分析"],
+            ["1073", "教育学部", "校级", "从数据融合到认知共生：生成式AI赋能大学生学习的多模态协同机制研究", "创新训练项目", "一般项目", "A. 教育技术与人工智能", "A1. AI辅助教学 / A3. 教育大数据与学习分析"],
+            ["1207", "教育学部", "校级", "科想而植——“AI＋新质农业生产力”跨学科项目式教学范式先行者", "创新训练项目", "一般项目", "B. 课程与教学论", "B4. 教学模式改革"],
+            ["1295", "教育学部", "校级", "芯中有度——双螺旋模型下大学生人工智能伦理课程创新研究", "创新训练项目", "一般项目", "H. 其他新兴/交叉领域", "H4. 教育哲学与伦理"],
+            ["1332", "教育学部", "校级", "基于“三维四域”框架的教师课堂注意力智能测评与提升路径研究", "创新训练项目", "一般项目", "A. 教育技术与人工智能", "A3. 教育大数据与学习分析 / A1. AI辅助教学"],
+            ["1363", "教育学部", "校级", "生成式人工智能应用于大学生研究性学习的框架设计与效果检验", "创新训练项目", "一般项目", "A. 教育技术与人工智能", "A1. AI辅助教学"]
+        ],
+        "北京师范大学(25年)": [
+            ["所属学院", "项目名称", "备注", "关注的方向", "具体的细分方向"],
+            ["教育学部", "“消失的星期六”：“双一流”高校本科生时间“消失”之谜的叙事研究", "国家级创新", "C. 教育心理与发展", "C1. 学习动机与engagement / C3. 情绪与社会性发展"],
+            ["教育学部", "基于AIGC辅助教学对智力障碍儿童识字能力提升的干预研究", "国家级创新", "A. 教育技术与人工智能", "A1. AI辅助教学"],
+            ["教育学部", "“共学者”还是“替代者”：大学生生成式人工智能使用行为模式与伦理风险研究", "国家级创新", "A. 教育技术与人工智能", "A1. AI辅助教学 / A3. 教育大数据与学习分析"],
+            ["教育学部", "“双休”政策背景下高中班主任教师权益的法律保障研究——基于各地区高中班主任压力状况的调查", "市级创新", "D. 教育管理与政策", "D5. 教育政策分析 / D3. 教师专业发展 / D4. 教育治理与学校管理"],
+            ["教育学部", "供求理论视角下大学生“慢就业”影响因素研究——以北京师范大学学生为例", "市级创新", "D. 教育管理与政策", "D5. 教育政策分析"],
+            ["教育学部", "教育惩戒规范化实施路径的实证研究——以法则解释为核心", "市级创新", "D. 教育管理与政策", "D5. 教育政策分析 / D4. 教育治理与学校管理"],
+            ["教育学部", "从种子到森林：特教学校新时代教育家精神培育的 叙事研究", "市级创新", "E. 学前教育与特殊教育", "E5. 特殊教育师资培养"],
+            ["教育学部", "生成式人工智能支持下职前教师人机协同教学设计 的交互行为特征、差异分析与优化策略——基于滞 后序列分析的实证研究", "市级创新", "A. 教育技术与人工智能", "A1. AI辅助教学 / A3. 教育大数据与学习分析"],
+            ["教育学部", "基于大模型的初中数学个性化学习题推荐系统的开发与应用", "市级创新", "A. 教育技术与人工智能", "A1. AI辅助教学 / A3. 教育大数据与学习分析"],
+            ["教育学部", "家庭中“分数至上”的话语规训对青少年意义感的影响——基于城乡二元结构的实证研究", "市级创新", "G. 家庭教育与社区教育", "G2. 家庭教育指导 / C6. 心理健康教育"],
+            ["教育学部", "大学生文化资本的研究", "市级创新", "D. 教育管理与政策", "D1. 教育公平与均衡发展"],
+            ["教育学部", "探究智能体在整本书阅读场景中对学生深度阅读的影响", "市级创新", "A. 教育技术与人工智能", "A1. AI辅助教学 / B1. 学科教学法创新"],
+            ["教育学部", "生成式人工智能（GAI）使用对本科生学术志趣的影响及其机制", "市级创新", "C. 教育心理与发展", "C1. 学习动机与engagement"],
+            ["教育学部", "双重建构效应视角下大学生 AIGC使用对自主学习能力的影响研究", "校级创新", "A. 教育技术与人工智能", "A1. AI辅助教学 / C2. 认知发展与学习策略"],
+            ["教育学部", "基于生成式人工智能的青春期家庭教育指导系统开发及效果研究", "校级创新", "G. 家庭教育与社区教育", "G2. 家庭教育指导"],
+            ["教育学部", "面向教育专业本科生的 人工智能通识性课程设计与教学平台构建", "校级创新", "A. 教育技术与人工智能", "A2. 在线教育与混合式教学 / A6. 编程教育与计算思维"],
+            ["教育学部", "Gen-AI赋能中小学教师跨学科教学的影响因素研究", "校级创新", "A. 教育技术与人工智能", "A1. AI辅助教学"],
+            ["教育学部", "融合教育情境下绘本剧改善学前孤独症儿童同伴关系的行动研究", "校级创新", "E. 学前教育与特殊教育", "E1. 幼儿园课程与游戏 / E3. 特殊儿童融合教育"],
+            ["教育学部", "赋能大学生批判性思维发展的智能体设计与应用研究——以英语写作教学为例", "校级创新", "A. 教育技术与人工智能", "A1. AI辅助教学 / B2. 核心素养培养"],
+            ["教育学部", "基于探究式学习的高中物理力学智能实验教学平台开发与应用研究", "校级创新", "A. 教育技术与人工智能", "A4. 虚拟现实/增强现实教育应用 / B4. 教学模式改革"],
+            ["教育学部", "“接受”还是“重构”：现象学视角下的师范生技术批判素养培养模式创新", "校级创新", "F. 教师教育与专业成长", "F1. 师范生培养模式 / F2. 教师知识研究"],
+            ["教育学部", "基于游戏化学习理念的小学校园人工智能课程开发", "校级创新", "A. 教育技术与人工智能", "A5. 教育游戏与游戏化学习 / A6. 编程教育与计算思维"],
+            ["教育学部", "“刷到”与“被刷到”：高校师生在社交媒体偶遇对师生关系的影响——一项基于SSO模型的双主体质性研究", "校级创新", "C. 教育心理与发展", "C3. 情绪与社会性发展"],
+            ["教育学部", "师生关系对大学生课堂沉默影响的实证研究：学业自我效能感的中介作用", "校级创新", "C. 教育心理与发展", "C1. 学习动机与engagement / C3. 情绪与社会性发展"],
+            ["教育学部", "基于多模态交互与物理辅助的初中数学智能体架构开发", "校级创新", "A. 教育技术与人工智能", "A1. AI辅助教学"],
+            ["教育学部", "精英大学学生“退出学业竞争”现象及其生成机制研究", "校级创新", "C. 教育心理与发展", "C1. 学习动机与engagement"],
+            ["教育学部", "慧创AI学堂：专注面向中国儿童的AI自研软硬件课程服务商", "创业实践项目", "A. 教育技术与人工智能", "A6. 编程教育与计算思维"]
+        ],
+        "杭州师范大学(25年)": [
+            ["项目名称", "项目类型", "学院", "关注的方向", "具体的细分方向"],
+            ["遗舞焕新——4D沉浸式舞蹈活化文化遗产的火炬手", "创业实践项目", "经亨颐教育学院", "A. 教育技术与人工智能", "A4. 虚拟现实/增强现实教育应用 / H5. 跨文化教育"],
+            ["AI赋能学生元认知发展的策略设计与应用研究", "创新训练项目", "经亨颐教育学院", "A. 教育技术与人工智能", "A1. AI辅助教学 / C2. 认知发展与学习策略"],
+            ["教育家精神视域下师范生师德培育路径研究——基于杭师大“一师精神”传承的案例分析", "创新训练项目", "经亨颐教育学院", "F. 教师教育与专业成长", "F1. 师范生培养模式 / F5. 名师/卓越教师成长轨迹"],
+            ["金角银边：老幼共融视阈下社区民生空间融合发展建设研究", "创新训练项目", "经亨颐教育学院", "G. 家庭教育与社区教育", "G4. 社区教育资源整合"],
+            ["托起明日之星：多元共治下普惠性托育服务发展模式及优化策略研究", "创新训练项目", "经亨颐教育学院", "E. 学前教育与特殊教育", "E2. 0-3岁托育与早期干预"],
+            ["共同富裕示范区城乡小学科技创新资源跨校共享现状调查与优化策略研究", "创新训练项目", "经亨颐教育学院", "D. 教育管理与政策", "D1. 教育公平与均衡发展 / D4. 教育治理与学校管理"],
+            ["具身认知视域下儿童绘本阅读的智能适配与互动优化研究", "创新训练项目", "经亨颐教育学院", "A. 教育技术与人工智能", "A1. AI辅助教学 / A3. 教育大数据与学习分析"],
+            ["智心凝梦：聚焦ADHD儿童的元认知动态调适与成长系统", "创业实践项目", "经亨颐教育学院", "C. 教育心理与发展", "C4. 特殊儿童心理与教育 / C2. 认知发展与学习策略"],
+            ["智启未来：基于K-12阶段的人工智能科普教育创新路径探索", "创业训练项目", "经亨颐教育学院", "A. 教育技术与人工智能", "A6. 编程教育与计算思维"],
+            ["童声起航——基于实时视听反馈技术的言语康复", "创业训练项目", "经亨颐教育学院", "E. 学前教育与特殊教育", "E4. 康复训练与辅助技术"],
+            ["二十大背景下贿赂行为的影响因素及干预研究：来自行为实验的证据", "创新训练项目", "经亨颐教育学院", "H. 其他新兴/交叉领域", "H4. 教育哲学与伦理"]
+        ],
+        "华南师范大学(25年)": [
+            ["项目名称", "项目类型", "级别", "关注的方向", "具体的细分方向"],
+            ["基于“家庭—个人”视角下听力障碍学生手机依赖机制研究", "创新训练项目", "校级", "C. 教育心理与发展", "C4. 特殊儿童心理与教育 / C6. 心理健康教育"],
+            ["盲童数感特征的实验及干预研究", "创新训练项目", "国家级", "C. 教育心理与发展", "C5. 发展关键期与早期教育 / C4. 特殊儿童心理与教育"],
+            ["基于家长教育满意度评估＂双减＂政策执行成效的因果推断研究", "创新训练项目", "国家级", "D. 教育管理与政策", "D5. 教育政策分析"],
+            ["社会支持视角下提升在粤就读港澳籍大学生留粤就业意愿的路径研究", "创新训练项目", "省级", "D. 教育管理与政策", "D1. 教育公平与均衡发展 / D5. 教育政策分析"],
+            ["发展普惠性托育体系——广州社区整合照护服务探索", "创新训练项目", "省级", "E. 学前教育与特殊教育", "E2. 0-3岁托育与早期干预 / G4. 社区教育资源整合"],
+            ["广州市流动儿童生存空间现状及提升策略研究", "创新训练项目", "校级", "G. 家庭教育与社区教育", "G3. 隔代教育"],
+            ["“双减”政策下校内课后服务质量评估体系的构建与实践——基于CIPP评价模型的探索", "创新训练项目", "校级", "D. 教育管理与政策", "D2. 教育评价改革 / D5. 教育政策分析"],
+            ["爱之家课程——给特殊需要儿童家门口的教育支持", "创业训练项目", "校级", "E. 学前教育与特殊教育", "E3. 特殊儿童融合教育"]
+        ],
+        "华中师范大学(25年)": [
+            ["所属学院", "项目名称", "项目级别", "项目类型", "专业", "是否师范专业", "年级", "关注的方向", "具体的细分方向"],
+            ["教育学院", "唇启视界--聋校义务教育阶段教材数字化语料库建设与应用（基于语文及沟通与交往教材）", "A级", "创新训练", "融合教育", "是", "2023", "A. 教育技术与人工智能", "A1. AI辅助教学 / A3. 教育大数据与学习分析"],
+            ["教育学院", "赋能增效——融合教育视角下个别化教育计划本土实践优化路径探析", "A级", "创新训练", "融合教育", "是", "2023", "E. 学前教育与特殊教育", "E4. 康复训练与辅助技术"],
+            ["教育学院", "技术赋能阅读：字词间距对汉语发展性阅读障碍儿童阅读能力的影响与应用研究", "B级", "创新训练", "融合教育", "是", "2022", "E. 学前教育与特殊教育", "E3. 特殊儿童融合教育"],
+            ["教育学院", "人工智能时代学前儿童好奇心的发展特点与促进策略", "B级", "创新训练", "学前教育", "是", "2022", "E. 学前教育与特殊教育", "E4. 康复训练与辅助技术 / E3. 特殊儿童融合教育"],
+            ["教育学院", "“洋甘菊”·青春期障碍女性生理知识科普网络视频课程开发", "B级", "创业训练", "融合教育", "是", "2022", "C. 教育心理与发展", "C1. 学习动机与engagement / C2. 认知发展与学习策略 / C5. 发展关键期与早期教育"],
+            ["教育学院", "", "", "", "", "", "", "E. 学前教育与特殊教育", "E3. 特殊儿童融合教育"]
+        ],
+        "南京师范大学(25年)": [
+            ["学院名称", "项目名称", "项目类别", "学校审批类别", "关注的方向", "具体的细分方向"],
+            ["教育科学学院", "“溯棋有源 ”——学习、教育和开发三端整合的实践", "创新训练项目", "校级项目", "A. 教育技术与人工智能", "A5. 教育游戏与游戏化学习"],
+            ["教育科学学院", "基于可持续发展教育的幼小一体化课程建设研究", "创新训练项目", "校级项目", "H. 其他新兴/交叉领域", "H2. 环境教育与可持续发展 / B3. 课程标准与教材分析"],
+            ["教育科学学院", "面向AIED的学习提示单设计及应用研究", "创新训练项目", "校级项目", "A. 教育技术与人工智能", "A1. AI辅助教学"],
+            ["教育科学学院", "促进义务教育阶段学生计算思维培养的AI智能体开发与应用研究", "创新训练项目", "校级项目", "A. 教育技术与人工智能", "A6. 编程教育与计算思维 / A1. AI辅助教学"],
+            ["教育科学学院", "“剧月 ”工作坊——基于教育戏剧赋能幼儿社会情感能力培育的实践项目", "创新训练项目", "校级项目", "E. 学前教育与特殊教育", "E1. 幼儿园课程与游戏 / C3. 情绪与社会性发展"],
+            ["教育科学学院", "玩中学，学中玩——教师和家长识别儿童游戏中学习的能力调查", "创新训练项目", "校级项目", "E. 学前教育与特殊教育", "E1. 幼儿园课程与游戏 / G1. 家校合作与沟通"],
+            ["教育科学学院", "基于中国传统艺术的大学生身心疗愈路径探索及实践研究", "创新训练项目", "校级项目", "C. 教育心理与发展", "C6. 心理健康教育 / C3. 情绪与社会性发展"],
+            ["教育科学学院", "“五育融合 ”背景下小学劳动课程体系的构建与实践研究", "创新训练项目", "校级项目", "H. 其他新兴/交叉领域", "H1. 劳动教育与综合实践"],
+            ["教育科学学院", "数智时代小学教师数字素养提升对策研究——以南京地区十二所小学为例", "创新训练项目", "校级项目", "D. 教育管理与政策", "D3. 教师专业发展 / A7. 教育信息化政策与基础设施"],
+            ["教育科学学院", "慧动未来——小学阶段ADHD儿童行为训练与教育创新实践", "创新训练项目", "校级项目", "C. 教育心理与发展", "C4. 特殊儿童心理与教育"],
+            ["教育科学学院", "“戏曲映美，育梦成真 ”——非遗文化进校园背景下中小学美育现状分析与实践研究", "创新训练项目", "校级项目", "B. 课程与教学论", "B1. 学科教学法创新 / B3. 课程标准与教材分析 / B4. 教学模式改革"],
+            ["教育科学学院", "中美大学生跨文化教育服务虚拟平台建设研究", "创新训练项目", "校级项目", "H. 其他新兴/交叉领域", "H5. 跨文化教育 / A2. 在线教育与混合式教学"],
+            ["教育科学学院", "江苏省课后服务政策实施现状调查——基于省内小学个案的质性研究", "创新训练项目", "校级项目", "D. 教育管理与政策", "D5. 教育政策分析"],
+            ["教育科学学院", "教育实习对师范生职业认同的影响研究", "创新训练项目", "校级项目", "F. 教师教育与专业成长", "F1. 师范生培养模式 / F3. 教师情感与身份认同"],
+            ["教育科学学院", "创育启智，用AI领航——创新教育视域下的小学阶段AIGC通识教育课程多模态资源开发", "创新训练项目", "省级一般项目", "A. 教育技术与人工智能", "A1. AI辅助教学 / A6. 编程教育与计算思维"],
+            ["教育科学学院", "博物馆资源在中学历史教育读本中的整合与应用策略研究——以中国科举博物馆为例", "创新训练项目", "省级一般项目", "B. 课程与教学论", "B1. 学科教学法创新 / B3. 课程标准与教材分析"],
+            ["教育科学学院", "教育信息化背景下基于意象意境的诗词解析系统及教学策略", "创新训练项目", "省级一般项目", "A. 教育技术与人工智能", "A1. AI辅助教学 / B1. 学科教学法创新"],
+            ["教育科学学院", "人机协同视域下中小学作文教学模式转型研究—基于智能作文批改系统的应用", "创新训练项目", "省级一般项目", "A. 教育技术与人工智能", "A1. AI辅助教学 / B1. 学科教学法创新 / B4. 教学模式改革"],
+            ["教育科学学院", "智启生命，“画 ”说成长——基于AI技术的小学低年级生命教育绘本开发与推广应用", "创新训练项目", "省级一般项目", "A. 教育技术与人工智能", "A1. AI辅助教学"],
+            ["教育科学学院", "基于生命历程的留守儿童幼小衔接经历及适应问题研究", "创新训练项目", "省级一般项目", "C. 教育心理与发展", "C5. 发展关键期与早期教育 / C3. 情绪与社会性发展"],
+            ["教育科学学院", "进城务工人员随迁子女小学学段教育过程公平问题研究——以南京市为例", "创新训练项目", "省级一般项目", "D. 教育管理与政策", "D1. 教育公平与均衡发展 / D5. 教育政策分析"],
+            ["教育科学学院", "非遗“云相见 ”，美育“面对面 ”——智能时代高校学生美育共享平台建设", "创新训练项目", "省级一般项目", "A. 教育技术与人工智能", "A2. 在线教育与混合式教学"],
+            ["教育科学学院", "推动义务教育优质均衡发展——基于教育资源动态配置的深度分析与前瞻性规划", "创新训练项目", "省级重点项目", "D. 教育管理与政策", "D1. 教育公平与均衡发展 / D5. 教育政策分析"],
+            ["教育科学学院", "“时光共赴，趣阅相伴 ”——绘实交互的“趣阅岛 ”亲子共读软件设计与开发", "创新训练项目", "省级重点项目", "G. 家庭教育与社区教育", "G2. 家庭教育指导 / A4. 虚拟现实/增强现实教育应用"],
+            ["教育科学学院", "基于AI与XR技术的仿真物理实验智能预警平台——以居里温度测定与电磁现象实验为例", "创新训练项目", "省级重点项目", "A. 教育技术与人工智能", "A1. AI辅助教学 / A4. 虚拟现实/增强现实教育应用"],
+            ["教育科学学院", "五育融合视域下的延时特色课程开发——“金陵砖 ”文化遗产保护与南京文化传承", "创新训练项目", "省级重点项目", "B. 课程与教学论", "B1. 学科教学法创新 / B4. 教学模式改革 / B2. 核心素养培养"],
+            ["教育科学学院", "家校社协同育人视角下小学劳动课程开发研究——以南京农业大学实验小学为例", "创新训练项目", "省级重点项目", "H. 其他新兴/交叉领域", "H1. 劳动教育与综合实践 / D4. 教育治理与学校管理"]
+        ],
+        "浙江大学(25年)": [
+            ["项目名称", "立项学院", "项目类别", "关注的方向", "具体的细分方向"],
+            ["基于云端大模型的多生理运动传感器设计与应用", "教育学院", "国创--创新训练", "A. 教育技术与人工智能", "A1. AI辅助教学 / A3. 教育大数据与学习分析"],
+            ["非线性教学法对大学生立定跳远技能提升的影响", "教育学院", "国创--创新训练", "B. 课程与教学论", "B1. 学科教学法创新 / B4. 教学模式改革"],
+            ["基于深度学习与多目标追踪的足球运动员智能识别与算法优化", "教育学院", "国创--创新训练", "A. 教育技术与人工智能", "A3. 教育大数据与学习分析"],
+            ["国际化背景下全英文本科课程的学习效果研究", "教育学院", "国创--创新训练", "B. 课程与教学论", "B1. 学科教学法创新 / B4. 教学模式改革"],
+            ["大学生微辅修专业选择研究：影响机制、突出问题及改进策略 ——以浙江大学为例", "教育学院", "国创--创新训练", "D. 教育管理与政策", "D4. 教育治理与学校管理 / D5. 教育政策分析"]
+        ],
+
+
+        // ================= 24年数据（新增大创） =================
+        "西南大学(24年)": [
+            ["项目级别", "学院（部）", "项目名称", "项目类型", "项目类别", "关注的方向", "具体的细分方向", "研究方法", "研究场景", "研究对象"],
+            ["国家级", "教育学部", "基于生成式人工智能的VR语文古诗词教学产品", "创新训练项目", "一般项目", "A. 教育技术与人工智能", "A1. AI辅助教学 / A4. 虚拟现实/增强现实教育应用", "4. 设计开发研究", "中小学", "中小学生 / 教师"],
+            ["市级", "教育学部", "特殊教育信息化背景下孤独症儿童家庭康复的现实困境及突破路径研究", "创新训练项目", "“青年红色筑梦之旅”专项项目", "E. 学前教育与特殊教育", "E4. 康复训练与辅助技术", "2. 质性研究", "家庭 / 特殊教育学校/康复机构", "特殊教育群体 / 家长/监护人"],
+            ["市级", "教育学部", "基于VR技术的实验室安全教育仿真演练系统的设计与实践", "创新训练项目", "一般项目", "A. 教育技术与人工智能", "A4. 虚拟现实/增强现实教育应用", "4. 设计开发研究", "大学校园", "大学生"],
+            ["市级", "教育学部", "大学还是“高中plus”？--大学“高中化”的形成机制与破解路径研究", "创新训练项目", "一般项目", "D. 教育管理与政策", "D4. 教育治理与学校管理", "3. 混合研究", "大学校园", "大学生 / 教师"],
+            ["市级", "教育学部", "“双减”背景下课堂教学资源智能优选模型构建及其应用策略研究", "创新训练项目", "一般项目", "A. 教育技术与人工智能", "A1. AI辅助教学 / A3. 教育大数据与学习分析", "4. 设计开发研究", "中小学", "教师 / 中小学生"],
+            ["市级", "教育学部", "HUI星计划——打造孤独症儿童亲子伴读智慧平台", "创业训练项目", "一般项目", "E. 学前教育与特殊教育", "E4. 康复训练与辅助技术 / C4. 特殊儿童心理与教育 / G2. 家庭教育指导", "4. 设计开发研究", "社区/家庭 / 在线教育平台/网络社群 / 特殊教育学校/康复机构", "特殊教育群体 / 家长/监护人"],
+            ["市级", "教育学部", "培根育魂：基于教育家精神的师范生班级教育实践创新探究", "创新训练项目", "一般项目", "F. 教师教育与专业成长", "F1. 师范生培养模式", "5. 行动研究", "大学校园", "大学生"],
+            ["市级", "教育学部", "“城乡共融，智启新篇”——助力城乡教育融合发展的智慧服务模型构建研究", "创新训练项目", "重点领域支持项目", "D. 教育管理与政策", "D1. 教育公平与均衡发展", "4. 设计开发研究", "中小学 / 教育行政/教研机构", "中小学生 / 教师 / 教育管理者"],
+            ["市级", "教育学部", "科想而知——青少年“人工智能＋”天宫实验室", "创业训练项目", "一般项目", "A. 教育技术与人工智能", "A4. 虚拟现实/增强现实教育应用", "4. 设计开发研究", "中小学 / 在线教育平台", "中小学生"],
+            ["校级", "教育学部", "启智引航——基于生成式AI的特殊学生个别化教育计划制定智能助手", "创新训练项目", "一般项目", "E. 学前教育与特殊教育", "E3. 特殊儿童融合教育", "4. 设计开发研究", "特殊教育学校/康复机构", "特殊教育群体 / 教师"],
+            ["校级", "教育学部", "小学教师项目式学习的教学胜任力测量模型构建与实证研究", "创新训练项目", "一般项目", "B. 课程与教学论", "B4. 教学模式改革", "1. 量化研究", "中小学", "教师"],
+            ["校级", "教育学部", "人工智能聊天机器人在教学辅助中的应用效果研究", "创新训练项目", "一般项目", "A. 教育技术与人工智能", "A1. AI辅助教学", "1. 量化研究", "中小学 / 在线教育平台", "中小学生 / 教师"],
+            ["校级", "教育学部", "数字技术促进西部乡村学校学生学业发展的风险识别和化解机制——基于人与技术关系的分析框架", "创新训练项目", "一般项目", "D. 教育管理与政策", "D1. 教育公平与均衡发展", "6. 文献综述", "中小学", "中小学生"],
+            ["校级", "教育学部", "对中国支教30年来的回答—基于案例的大学生支教课程纵向回顾与横向比较研究", "创新训练项目", "“青年红色筑梦之旅”专项项目", "F. 教师教育与专业成长", "F1. 师范生培养模式", "8. 比较研究", "大学校园 / 中小学", "大学生 / 中小学生"],
+            ["校级", "教育学部", "弘扬传统文化的小学高学段劳动教育游戏的设计与实现——以烹饪与营养任务群为例", "创新训练项目", "一般项目", "A. 教育技术与人工智能", "A5. 教育游戏与游戏化学习", "4. 设计开发研究", "中小学", "中小学生"],
+            ["校级", "教育学部", "宝刀未老：老年人对反诈小程序的体验及其优化路径", "创新训练项目", "一般项目", "G. 家庭教育与社区教育", "G4. 社区教育资源整合", "3. 混合研究", "社区/家庭", "其他"],
+            ["校级", "教育学部", "拔尖创新人才培养的起点在哪里——基于“双一流”高校本科生创新能力及培养现状的实证分析", "创新训练项目", "一般项目", "B. 课程与教学论", "B2. 核心素养培养", "1. 量化研究", "大学校园", "大学生"],
+            ["校级", "教育学部", "教师何以成为道德教育者——新时代师范生学科德育素养现状审视与培养策略的实证研究", "创新训练项目", "一般项目", "F. 教师教育与专业成长", "F1. 师范生培养模式 / F2. 教师知识研究", "3. 混合研究", "大学校园", "大学生"],
+            ["校级", "教育学部", "践行教育家精神--本科师范生教育家精神调查与涵养策略研究", "创新训练项目", "一般项目", "F. 教师教育与专业成长", "F1. 师范生培养模式 / F3. 教师情感与身份认同", "3. 混合研究", "大学校园", "大学生"],
+            ["校级培育", "教育学部", "“戎衣”到“青衿”——基于双一流院校退役复学大学生学校适应提升性策略研究", "创新训练项目", "一般项目", "C. 教育心理与发展", "C3. 情绪与社会性发展", "3. 混合研究", "大学校园", "大学生"]
+        ],
+        "华东师范大学(24年)": [
+            ["项目名称", "项目类型", "所属院系", "项目负责人所在专业", "级别", "备注", "关注的方向", "具体的细分方向", "研究方法", "研究场景", "研究对象"],
+            ["中科“芯”支付——开创数字弱势群体的“碰一碰”支付的新时代", "创业实践项目", "教育学部", "特殊教育", "国家级", "", "E. 学前教育与特殊教育", "E4. 康复训练与辅助技术", "4. 设计开发研究", "特殊教育学校/康复机构 / 社区/家庭", "特殊教育群体"],
+            ["基于AIGC的数字媒体创作全流程模式研究——以《大化西游》为例", "创新训练项目", "教育学部", "教育技术学", "国家级", "", "A. 教育技术与人工智能", "A5. 教育游戏与游戏化学习", "4. 设计开发研究", "中小学 / 在线教育平台", "中小学生"],
+            ["“星辰之子？中国探月航天艺术之旅”——数智技术赋能馆校合作A-STEM课程开发", "创新训练项目", "教育学部", "教育学类", "国家级", "", "B. 课程与教学论", "B3. 课程标准与教材分析 / B4. 教学模式改革", "4. 设计开发研究", "中小学 / 其他", "中小学生 / 教师"],
+            ["融入初中道法教学的“全面性教育”菜单式手册设计研究", "创新训练项目", "教育学部", "教育学类", "国家级", "", "B. 课程与教学论", "B1. 学科教学法创新 / B3. 课程标准与教材分析", "4. 设计开发研究", "中小学", "初中生 / 教师"],
+            ["学校氛围对中学生校园欺凌旁观者行为的影响路径研究——以社会与情感能力为中介", "创新训练项目", "教育学部", "教育学类", "国家级", "", "C. 教育心理与发展", "C3. 情绪与社会性发展 / C6. 心理健康教育", "1. 量化研究", "中小学", "中学生"],
+            ["基于大模型的课堂交互生成分析系统设计与开发", "创新训练项目", "教育学部", "教育技术学", "国家级", "", "A. 教育技术与人工智能", "A3. 教育大数据与学习分析", "4. 设计开发研究", "中小学", "中小学生 / 教师"],
+            ["普惠性社区托育政策与实施研究--以上海市宝宝屋为例", "创新训练项目", "教育学部", "教育学类", "国家级", "", "D. 教育管理与政策", "D5. 教育政策分析 / D1. 教育公平与均衡发展", "2. 质性研究", "社区/家庭 / 教育行政/教研机构", "幼儿 / 家长 / 教育管理者"],
+            ["情煦——AI驱动的学生心理健康守护平台", "创新训练项目", "教育学部", "教育技术学", "国家级", "", "A. 教育技术与人工智能", "A1. AI辅助教学 / A3. 教育大数据与学习分析", "4. 设计开发研究", "在线教育平台/网络社群 / 中小学", "中小学生 / 大学生"],
+            ["言趣虚拟训练空间：儿童语言康复与促进虚拟仿真研习平台的研发与运用", "创业训练项目", "教育学部", "听力与言语康复学", "国家级", "重点支持培育项目", "E. 学前教育与特殊教育", "E4. 康复训练与辅助技术 / A4. 虚拟现实/增强现实教育应用", "4. 设计开发研究", "特殊教育学校/康复机构 / 社区/家庭", "特殊教育群体 / 教师 / 家长"],
+            ["基于汉语普通话特征的口吃患者言语自然度声学评价模型构建", "创新训练项目", "教育学部", "听力与言语康复学", "国家级", "", "E. 学前教育与特殊教育", "E4. 康复训练与辅助技术", "4. 设计开发研究", "特殊教育学校/康复机构", "特殊教育群体"],
+            ["融合教育背景下：民族特色文化课程的开发与实施", "创新训练项目", "教育学部", "教育学类", "国家级", "教育+研习项目", "H. 其他新兴/交叉领域", "H5. 跨文化教育", "4. 设计开发研究", "中小学", "中小学生 / 教师"],
+            ["少年的奇幻冒险——培智学校7-9年级PBL科学课程开发", "创新训练项目", "教育学部", "特殊教育", "国家级", "教育+研习项目", "B. 课程与教学论", "B4. 教学模式改革", "4. 设计开发研究", "特殊教育学校/康复机构", "特殊教育群体"],
+            ["从物质性“功利价值”到精神性“情绪价值”——基于扎根理论的高校学生干部社会情感能力发展机制与对策研究", "创新训练项目", "教育学部", "教育学类", "市级", "", "C. 教育心理与发展", "C3. 情绪与社会性发展", "2. 质性研究", "大学校园", "大学生"],
+            ["艺路童行——赋能儿童传统文化大美育课程", "创业训练项目", "教育学部", "教育学类", "市级", "", "B. 课程与教学论", "B3. 课程标准与教材分析 / B2. 核心素养培养", "4. 设计开发研究", "中小学 / 其他", "中小学生"],
+            ["“JOYMOV”童趣运动坊", "创业训练项目", "教育学部", "教育学类", "市级", "", "E. 学前教育与特殊教育", "E1. 幼儿园课程与游戏", "4. 设计开发研究", "幼儿园/早教机构 / 中小学", "幼儿 / 中小学生"],
+            ["银发新声，魅力依旧——基于数智化云平台的老年嗓音守护计划", "创业训练项目", "教育学部", "听力与言语康复学", "市级", "", "G. 家庭教育与社区教育", "G4. 社区教育资源整合", "4. 设计开发研究", "社区/家庭 / 在线教育平台", "其他"],
+            ["绘出温暖，育见心聆——表达性艺术亲子心理工作坊", "创业训练项目", "教育学部", "特殊教育", "市级", "", "C. 教育心理与发展", "C6. 心理健康教育", "4. 设计开发研究", "社区/家庭", "幼儿 / 小学生 / 家长/监护人"],
+            ["量！你知多少？——自闭症谱系障碍儿童量概念干预的程序开发与实践研究", "创新训练项目", "教育学部", "教育学类", "市级", "", "C. 教育心理与发展", "C4. 特殊儿童心理与教育 / C5. 发展关键期与早期教育 / C2. 认知发展与学习策略", "4. 设计开发研究", "特殊教育学校/康复机构", "特殊教育群体"],
+            ["县中学生社会情感能力对主观幸福感的影响研究——以学业浮力为中介", "创新训练项目", "教育学部", "公共事业管理", "市级", "", "C. 教育心理与发展", "C3. 情绪与社会性发展 / C6. 心理健康教育 / C1. 学习动机与engagement", "1. 量化研究", "中小学", "中小学生"],
+            ["人工智能视域下促进小学生课堂学习投入的实证研究——利用chatGPT进行教学分析", "创新训练项目", "教育学部", "教育技术学", "市级", "", "A. 教育技术与人工智能", "A3. 教育大数据与学习分析 / C1. 学习动机与engagement", "1. 量化研究", "中小学", "中小学生"],
+            ["开源硬件科创课程对于学生创新思维和学科素养的影响研究", "创新训练项目", "教育学部", "教育技术学", "市级", "", "A. 教育技术与人工智能", "A6. 编程教育与计算思维", "1. 量化研究", "中小学", "中小学生"],
+            ["数字化技术赋能培智课堂的应用研究——以希沃白板平台为例", "创新训练项目", "教育学部", "教育学类", "市级", "", "A. 教育技术与人工智能", "A7. 教育信息化政策与基础设施", "4. 设计开发研究", "特殊教育学校/康复机构", "特殊教育群体 / 教师"],
+            ["我国0-3岁婴幼儿教育教师职业素养要素及其应用", "创新训练项目", "教育学部", "教育学类", "市级", "", "E. 学前教育与特殊教育", "E2. 0-3岁托育与早期干预", "3. 混合研究", "幼儿园/早教机构", "教师"],
+            ["智学创设——基于真实情境的项目式学习任务单生成工具开发", "创新训练项目", "教育学部", "教育技术学", "市级", "", "A. 教育技术与人工智能", "A1. AI辅助教学", "4. 设计开发研究", "中小学 / 在线教育平台", "教师 / 中小学生"],
+            ["融合教育趋势下学前教育师资职前培养体系的研究与启示——基于沪港澳三地的实证研究", "创新训练项目", "教育学部", "教育学类", "市级", "", "F. 教师教育与专业成长", "F1. 师范生培养模式 / E3. 特殊儿童融合教育", "8. 比较研究", "大学校园 / 教育行政/教研机构", "大学生 / 教育管理者"],
+            ["通“才”达识览闻“辩”见——“才辩”青少年思辨力提升计划", "创业训练项目", "教育学部", "教育学类", "市级", "", "B. 课程与教学论", "B2. 核心素养培养", "4. 设计开发研究", "中小学", "中小学生"],
+            ["为什么高中生想改变选科？——基于新高考学生改选意向的实证研究", "创新训练项目", "教育学部", "教育学类", "市级", "", "D. 教育管理与政策", "D2. 教育评价改革", "1. 量化研究", "中小学", "中小学生"],
+            ["童言沪韵——上海市学前儿童沪语学习现状及促进研究", "创新训练项目", "教育学部", "学前教育", "市级", "", "C. 教育心理与发展", "C5. 发展关键期与早期教育", "3. 混合研究", "幼儿园/早教机构 / 社区/家庭", "幼儿 / 家长/监护人 / 教师"],
+            ["“X-STAR”——基于磁共振测量的孤独症儿童多感官情绪行为干预系统", "创业训练项目", "教育学部", "听力与言语康复学", "市级", "", "E. 学前教育与特殊教育", "E4. 康复训练与辅助技术", "4. 设计开发研究", "特殊教育学校/康复机构", "特殊教育群体"],
+            ["幼儿园“一对一倾听”开展现状调研及分析", "创新训练项目", "教育学部", "教育学类", "市级", "", "E. 学前教育与特殊教育", "E1. 幼儿园课程与游戏", "3. 混合研究", "幼儿园/早教机构", "幼儿 / 教师"],
+            ["我们都一样：面向小学生的融合教育绘本课程资源开发", "创新训练项目", "教育学部", "教育学类", "市级", "", "E. 学前教育与特殊教育", "E3. 特殊儿童融合教育", "4. 设计开发研究", "中小学", "中小学生"],
+            ["基于领域大模型的智能学伴研究", "创新训练项目", "教育学部", "教育技术学", "市级", "", "A. 教育技术与人工智能", "A1. AI辅助教学", "4. 设计开发研究", "在线教育平台", "中小学生 / 大学生"],
+            ["人工智能技术使用对高中生创造性倾向的影响——以自我效能感为中介", "创新训练项目", "教育学部", "教育学类", "市级", "", "C. 教育心理与发展", "C1. 学习动机与engagement / C2. 认知发展与学习策略", "1. 量化研究", "中小学", "高中生"],
+            ["基于VR技术的ASD人群职业实训课程开发及应用研究", "创新训练项目", "教育学部", "教育技术学", "市级", "", "A. 教育技术与人工智能", "A4. 虚拟现实/增强现实教育应用 / A5. 教育游戏与游戏化学习", "4. 设计开发研究", "特殊教育学校/康复机构", "特殊教育群体"],
+            ["行为分析师在孤独症儿童教育康复服务中的现状与支持策略研究", "创新训练项目", "教育学部", "教育学类", "市级", "", "E. 学前教育与特殊教育", "E3. 特殊儿童融合教育 / E4. 康复训练与辅助技术 / E5. 特殊教育师资培养", "3. 混合研究", "特殊教育学校/康复机构 / 教育行政/教研机构", "特殊教育群体 / 教师 / 教育管理者"],
+            ["AIGC技术赋能师范生教学设计能力提升的成效研究——基于一项实验研究证据", "创新训练项目", "教育学部", "教育学类", "市级", "", "A. 教育技术与人工智能", "A1. AI辅助教学", "1. 量化研究", "大学校园 / 在线教育平台", "大学生"],
+            ["拔尖创新人才培养背景下“双一流”高校本科生科研参与意愿及其影响因素研究", "创新训练项目", "教育学部", "教育学类", "市级", "", "C. 教育心理与发展", "C1. 学习动机与engagement", "1. 量化研究", "大学校园", "大学生"],
+            ["基于多模态数据的智能教学感知与分析系统的设计与研究", "创新训练项目", "教育学部", "教育技术学", "市级", "", "A. 教育技术与人工智能", "A1. AI辅助教学 / A3. 教育大数据与学习分析", "4. 设计开发研究", "中小学 / 大学校园 / 在线教育平台", "中小学生 / 大学生 / 教师"],
+            ["普惠性托育服务可及性的现状调研——以S市城郊结合部为例", "创新训练项目", "教育学部", "教育学类", "市级", "", "E. 学前教育与特殊教育", "E2. 0-3岁托育与早期干预", "3. 混合研究", "幼儿园/早教机构 / 社区/家庭", "幼儿 / 家长/监护人"],
+            ["技术赋能背景下组织支持对青年教师教学创新行为的影响研究", "创新训练项目", "教育学部", "教育学类", "市级", "", "D. 教育管理与政策", "D3. 教师专业发展 / D4. 教育治理与学校管理", "1. 量化研究", "中小学 / 大学校园", "教师"],
+            ["绘心绘情：面向孤独症谱系障碍儿童的社会情感学习绘本课程开发", "创新训练项目", "教育学部", "特殊教育", "市级", "", "C. 教育心理与发展", "C4. 特殊儿童心理与教育", "4. 设计开发研究", "特殊教育学校/康复机构", "特殊教育群体"],
+            ["数智时代基于多模态数据的大学生批判性思维测评研究", "创新训练项目", "教育学部", "教育技术学", "市级", "", "A. 教育技术与人工智能", "A3. 教育大数据与学习分析", "4. 设计开发研究", "大学校园", "大学生"],
+            ["万筒花开——儿童视角下的艺术和艺术教育影像志", "创新训练项目", "教育学部", "教育学类", "市级", "", "E. 学前教育与特殊教育", "E1. 幼儿园课程与游戏", "2. 质性研究", "幼儿园/早教机构", "幼儿 / 教师"],
+            ["脱“影”而出：学校管理运行沉浸式体验游戏项目", "创业训练项目", "教育学部", "教育学类", "市级", "", "A. 教育技术与人工智能", "A5. 教育游戏与游戏化学习", "4. 设计开发研究", "大学校园 / 教育行政/教研机构", "大学生 / 教育管理者"],
+            ["数智辅导：基于大模型的数字辅导员设计与开发", "创新训练项目", "教育学部", "教育技术学", "市级", "", "A. 教育技术与人工智能", "A1. AI辅助教学", "4. 设计开发研究", "中小学 / 在线教育平台", "中小学生"],
+            ["SAB融合合唱对孤独症青少年社交能力影响的实践研究", "创新训练项目", "教育学部", "教育学类", "市级", "教育+研习项目", "C. 教育心理与发展", "C4. 特殊儿童心理与教育", "1. 量化研究", "特殊教育学校/康复机构", "特殊教育群体"],
+            ["基于博物馆教育的培智学校系列实践课程开发", "创新训练项目", "教育学部", "教育学类", "市级", "教育+研习项目", "E. 学前教育与特殊教育", "E3. 特殊儿童融合教育", "4. 设计开发研究", "特殊教育学校/康复机构 / 社区/家庭", "特殊教育群体"],
+            ["面向大学生的应急手语微课开发", "创新训练项目", "教育学部", "特殊教育", "市级", "教育+研习项目", "E. 学前教育与特殊教育", "E4. 康复训练与辅助技术", "4. 设计开发研究", "大学校园 / 在线教育平台", "大学生"],
+            ["智韵星球——针对特殊人群的Steam课程资源开发", "创新训练项目", "教育学部", "教育技术学", "校级", "", "未分类", "解析失败", "解析失败", "解析失败"],
+            ["特殊教育专业本科生信息化教学素养及其培养研究", "创新训练项目", "教育学部", "特殊教育", "校级", "", "E. 学前教育与特殊教育", "E5. 特殊教育师资培养", "3. 混合研究", "大学校园", "大学生"],
+            ["基于虚拟教研的教师数字素养画像技术研究", "创新训练项目", "教育学部", "教育技术学", "校级", "", "A. 教育技术与人工智能", "A3. 教育大数据与学习分析", "4. 设计开发研究", "在线教育平台/网络社群", "教师"],
+            ["适合长期住院儿童的课程游戏活动探究——以S市儿童专科医院为例", "创新训练项目", "教育学部", "学前教育", "校级", "", "A. 教育技术与人工智能", "A5. 教育游戏与游戏化学习", "4. 设计开发研究", "其他", "幼儿 / 中小学生"],
+            ["非遗文化进校园的实施路径研究——以云南白族“扎染”为例", "创新训练项目", "教育学部", "教育学类", "校级", "", "H. 其他新兴/交叉领域", "H1. 劳动教育与综合实践 / B4. 教学模式改革", "4. 设计开发研究", "中小学", "中小学生 / 教师"],
+            ["“五育并举，非遗护航”——让西南遗韵走进小学课后服务课堂", "创新训练项目", "教育学部", "公共事业管理", "校级", "", "H. 其他新兴/交叉领域", "H1. 劳动教育与综合实践", "4. 设计开发研究", "中小学", "中小学生"],
+            ["3-5年级学习困难学生汉语成语理解行为与眼动特征", "创新训练项目", "教育学部", "教育学类", "校级", "", "C. 教育心理与发展", "C2. 认知发展与学习策略 / C4. 特殊儿童心理与教育", "1. 量化研究", "中小学", "中小学生 / 特殊教育群体"],
+            ["“教联体”视角下校园霸凌者画像分析与干预策略研究", "创新训练项目", "教育学部", "行政管理", "校级", "", "C. 教育心理与发展", "C3. 情绪与社会性发展 / C6. 心理健康教育 / D4. 教育治理与学校管理", "1. 量化研究", "中小学", "中小学生 / 教师"],
+            ["学校数字化转型深度推进的困境与对策——组织功能障碍视角", "创新训练项目", "教育学部", "教育技术学", "校级", "", "D. 教育管理与政策", "D4. 教育治理与学校管理", "2. 质性研究", "中小学 / 教育行政/教研机构", "教育管理者 / 教师"],
+            ["以知识元为核心的定制化考研智适应学习系统", "创业实践项目", "教育学部", "教育技术学", "校级", "", "A. 教育技术与人工智能", "A1. AI辅助教学 / A3. 教育大数据与学习分析", "4. 设计开发研究", "在线教育平台", "大学生"],
+            ["上海市学前教师融合教育知识需求的调查研究", "创新训练项目", "教育学部", "学前教育", "校级", "教育+研习项目", "E. 学前教育与特殊教育", "E5. 特殊教育师资培养", "1. 量化研究", "幼儿园/早教机构", "教师"],
+            ["指向学前儿童科学素养的科学博物馆资源应用现状研究——以上海市为例", "创新训练项目", "教育学部", "教育学类", "校级", "教育+研习项目", "G. 家庭教育与社区教育", "G4. 社区教育资源整合", "1. 量化研究", "幼儿园/早教机构 / 社区/家庭", "教师 / 家长/监护人"],
+            ["基于生成式AI的对话式学习：促进学生高阶思维的问题链设计", "创新训练项目", "教育学部", "教育技术学", "校级", "教育+研习项目", "A. 教育技术与人工智能", "A1. AI辅助教学", "4. 设计开发研究", "在线教育平台", "中小学生"],
+            ["面向AI教育应用的文理专业AIGC应用模式差异研究——以华东师范大学为例", "创新训练项目", "教育学部", "教育技术学", "校级", "教育+研习项目", "A. 教育技术与人工智能", "A1. AI辅助教学 / A3. 教育大数据与学习分析", "3. 混合研究", "大学校园", "大学生"],
+            ["特殊中职学校智力障碍学生青春期教育课程开发", "创新训练项目", "教育学部", "教育学类", "校级", "教育+研习项目", "E. 学前教育与特殊教育", "E3. 特殊儿童融合教育", "4. 设计开发研究", "特殊教育学校/康复机构", "特殊教育群体"],
+            ["师范生中小学拓展课程开发及实践经历对师范生提升“学会教学”能力的个案研究", "创新训练项目", "教育学部", "教育学类", "校级", "教育+研习项目", "F. 教师教育与专业成长", "F1. 师范生培养模式", "2. 质性研究", "中小学 / 大学校园", "大学生"],
+            ["“国画毡艺·非遗文创”——基于非遗传统文化的初中美术课程研发", "创新训练项目", "教育学部", "艺术教育", "校级", "教育+研习项目", "B. 课程与教学论", "B1. 学科教学法创新 / B3. 课程标准与教材分析", "4. 设计开发研究", "中小学", "初中生 / 教师"],
+            ["小初衔接地理课——《发现生活中的地理》课程设计与实施", "创新训练项目", "教育学部", "教育学类", "校级", "教育+研习项目", "B. 课程与教学论", "B1. 学科教学法创新 / B3. 课程标准与教材分析 / B4. 教学模式改革", "4. 设计开发研究", "中小学", "中小学生 / 教师"],
+            ["家校合作互助视角下对于8-12岁智力障碍儿童性别教育的微课研发", "创新训练项目", "教育学部", "教育学类", "校级", "教育+研习项目", "E. 学前教育与特殊教育", "E3. 特殊儿童融合教育 / E4. 康复训练与辅助技术 / G1. 家校合作与沟通", "4. 设计开发研究", "特殊教育学校/康复机构 / 社区/家庭 / 中小学", "特殊教育群体 / 教师 / 家长"]
+        ],
+        "南京师范大学(24年)": [
+            ["学院名称", "项目名称", "项目类别", "所属等级", "关注的方向", "具体的细分方向", "研究方法", "研究场景", "研究对象"],
+            ["公共管理学院", "社区互助养老何以长效？——关于代际补偿机制的研究", "创新训练类", "省级一般项目", "H. 其他新兴/交叉领域", "H1. 劳动教育与综合实践", "10. 其他/不确定", "其他", "其他"],
+            ["公共管理学院", "从重构到“重生” ：乡村公共空间治理路径研究——以江苏省淮安市淮阴区四个村为例", "创新训练类", "省级一般项目", "G. 家庭教育与社区教育", "G4. 社区教育资源整合", "2. 质性研究", "社区/家庭", "其他"],
+            ["公共管理学院", "共同富裕视角下新型农村集体经济发展的路径研究——基于江苏省13市16村的实地调查", "创新训练类", "省级一般项目", "H. 其他新兴/交叉领域", "H5. 跨文化教育", "2. 质性研究", "其他", "其他"],
+            ["教育科学学院", "学龄人口变化趋势下的教育资源动态配置优化分析与预测系统", "创新训练类", "省级重点项目", "D. 教育管理与政策", "D1. 教育公平与均衡发展 / D5. 教育政策分析", "1. 量化研究", "教育行政/教研机构", "教育管理者 / 中小学生"],
+            ["教育科学学院", "新课标背景下小学中年级学生劳动素养的测评及培育研究", "创新训练类", "省级重点项目", "H. 其他新兴/交叉领域", "H1. 劳动教育与综合实践", "4. 设计开发研究", "中小学", "小学生 / 教师"],
+            ["教育科学学院", "教育数字化转型背景下基于结构语义的儿童识字策略研究", "创新训练类", "省级重点项目", "B. 课程与教学论", "B1. 学科教学法创新 / A2. 在线教育与混合式教学", "4. 设计开发研究", "中小学 / 在线教育平台", "中小学生"],
+            ["教育科学学院", "“童声循迹，绘梦金陵”——新媒体时代下南京童谣的传承和发展", "创新训练类", "省级一般项目", "E. 学前教育与特殊教育", "E1. 幼儿园课程与游戏", "4. 设计开发研究", "幼儿园/早教机构 / 在线教育平台", "幼儿 / 教师"],
+            ["教育科学学院", "以生命教育为指导的小学高年级“守护花蕾：生理期暖心课”", "创新训练类", "省级一般项目", "B. 课程与教学论", "B3. 课程标准与教材分析", "4. 设计开发研究", "中小学", "中小学生"],
+            ["教育科学学院", "生成式AI赋能数字化教学资源开发与应用——以部编版小学语文三年级教材为例", "创新训练类", "省级一般项目", "A. 教育技术与人工智能", "A1. AI辅助教学", "4. 设计开发研究", "中小学 / 在线教育平台", "中小学生 / 教师"],
+            ["教育科学学院", "美育视角下非遗校本课程的设计——以“云锦织梦”具身体验式课堂游戏为例", "创新训练类", "省级一般项目", "B. 课程与教学论", "B3. 课程标准与教材分析 / B4. 教学模式改革", "4. 设计开发研究", "中小学", "中小学生"],
+            ["教育科学学院", "幼小衔接适应性问题干预研究——基于AI技术的绘本开发及其效果检验", "创新训练类", "省级一般项目", "C. 教育心理与发展", "C3. 情绪与社会性发展", "1. 量化研究", "幼儿园/早教机构 / 中小学", "幼儿 / 中小学生"],
+            ["教育科学学院", "数字文化视域下基于知识图谱的汉字构字元素表意分析与应用", "创新训练类", "省级一般项目", "A. 教育技术与人工智能", "A1. AI辅助教学 / A3. 教育大数据与学习分析", "4. 设计开发研究", "中小学", "中小学生 / 教师"],
+            ["教育科学学院", "从雨花女英烈读“她力量”——小学阶段儿童读本设计研究", "创新训练类", "省级一般项目", "B. 课程与教学论", "B3. 课程标准与教材分析", "4. 设计开发研究", "中小学", "小学生"],
+            ["教育科学学院", "育才创新，师范先行——江苏省本科院校师范生创新能力的现状调查及提升策略研究", "创新训练类", "省级一般项目", "F. 教师教育与专业成长", "F1. 师范生培养模式", "1. 量化研究", "大学校园", "大学生"],
+            ["教育科学学院", "“焕然新生”——区域间幼儿园课程资源中转平台数据库建设的研究", "创新训练类", "省级一般项目", "E. 学前教育与特殊教育", "E1. 幼儿园课程与游戏", "4. 设计开发研究", "幼儿园/早教机构 / 在线教育平台", "幼儿 / 教师"],
+            ["教育科学学院", "词慧星图——基于联结主义和激活扩散模型的英语词汇星图", "创新训练类", "校级", "A. 教育技术与人工智能", "A1. AI辅助教学", "4. 设计开发研究", "在线教育平台", "中小学生"],
+            ["教育科学学院", "无忧社交，“和”同与共——社交礼仪数字助理APP设计与开发", "创新训练类", "校级", "A. 教育技术与人工智能", "A1. AI辅助教学", "4. 设计开发研究", "大学校园 / 在线教育平台", "大学生"],
+            ["教育科学学院", "基于生成式人工智能提示词设计的中学生问题提出能力研究", "创新训练类", "校级", "A. 教育技术与人工智能", "A1. AI辅助教学", "4. 设计开发研究", "中小学", "中小学生"],
+            ["教育科学学院", "课间革命：重构十分钟的力量——构建优质高效的课间十分钟的策略研究", "创新训练类", "校级", "未分类", "解析失败", "解析失败", "解析失败"],
+            ["教育科学学院", "“位育计划”——校家社协同育人视域下校园门前空间设计研究", "创新训练类", "校级", "D. 教育管理与政策", "D4. 教育治理与学校管理 / G1. 家校合作与沟通", "4. 设计开发研究", "中小学 / 社区", "教育管理者 / 家长 / 中小学生"],
+            ["教育科学学院", "“双减”政策背景下教师角色压力对职业承诺的影响及优化路径——以南京市公办小学为例", "创新训练类", "校级", "D. 教育管理与政策", "D3. 教师专业发展 / D5. 教育政策分析", "1. 量化研究", "中小学", "教师"],
+            ["教育科学学院", "数智融合下生成式人工智能对小学教师工作流的重塑", "创新训练类", "校级", "A. 教育技术与人工智能", "A1. AI辅助教学", "2. 质性研究", "中小学", "教师"],
+            ["教育科学学院", "新高考改革背景下乡镇普通高中生涯规划教育实施研究", "创新训练类", "校级", "D. 教育管理与政策", "D1. 教育公平与均衡发展 / D2. 教育评价改革 / D5. 教育政策分析", "3. 混合研究", "中小学", "中小学生 / 教师 / 教育管理者"],
+            ["教育科学学院", "基于团体辅导的流动儿童父母教养效能感提升研究", "创新训练类", "校级", "G. 家庭教育与社区教育", "G2. 家庭教育指导", "4. 设计开发研究", "社区/家庭 / 中小学", "家长/监护人"],
+            ["教育科学学院", "家园社协同育人视角下的“稚春”服务工作室开发", "创新训练类", "校级", "G. 家庭教育与社区教育", "G1. 家校合作与沟通 / G4. 社区教育资源整合", "4. 设计开发研究", "幼儿园/早教机构 / 社区/家庭", "幼儿 / 家长 / 教师"],
+            ["教育科学学院", "“双减”背景下“校家社”协同育人现状及创新路径探索——以南京市小学为例", "创新训练类", "校级", "D. 教育管理与政策", "D4. 教育治理与学校管理 / D5. 教育政策分析", "3. 混合研究", "中小学 / 社区/家庭", "中小学生 / 教师 / 家长"],
+            ["教育科学学院", "立德树人视域下传统文化元素融入小学课程思政的实践研究", "创新训练类", "校级", "B. 课程与教学论", "B1. 学科教学法创新", "4. 设计开发研究", "中小学", "小学生 / 教师"],
+            ["教育科学学院", "户外游戏中幼儿问题解决的研究——以江苏省南京市A幼儿园为例", "创新训练类", "校级", "E. 学前教育与特殊教育", "E1. 幼儿园课程与游戏", "2. 质性研究", "幼儿园/早教机构", "幼儿"],
+            ["教育科学学院", "幼儿情绪教育的现状调查——基于班级个案的质性研究", "创新训练类", "校级", "C. 教育心理与发展", "C3. 情绪与社会性发展", "2. 质性研究", "幼儿园/早教机构", "幼儿"],
+            ["教育科学学院", "生成式人工智能在小学英语教育中的应用", "创新训练类", "校级", "A. 教育技术与人工智能", "A1. AI辅助教学", "4. 设计开发研究", "中小学", "小学生 / 教师"],
+            ["教育科学学院", "“双减”背景下高校社团助力小学课后服务的路径研究", "创新训练类", "校级", "D. 教育管理与政策", "D5. 教育政策分析 / D4. 教育治理与学校管理", "3. 混合研究", "中小学 / 大学校园", "中小学生 / 大学生 / 教师"],
+            ["教育科学学院", "“唯年龄”还是“重兴趣”——高质量早期阅读的绘本选择方式探究", "创新训练类", "校级", "E. 学前教育与特殊教育", "E1. 幼儿园课程与游戏", "1. 量化研究", "幼儿园/早教机构 / 家庭", "幼儿 / 家长"],
+            ["教育科学学院", "核心素养导向下小学语文课堂跨学科融合教学案例研究——以南京市鼓楼区和淮安市盱眙县为例", "创新训练类", "校级", "B. 课程与教学论", "B2. 核心素养培养 / B1. 学科教学法创新 / B4. 教学模式改革", "2. 质性研究", "中小学", "小学生 / 教师"],
+            ["教育科学学院", "AIGC在小学数学学习中的应用——基于生成式人工智能的框架构建和理论指南", "创新训练类", "校级", "A. 教育技术与人工智能", "A1. AI辅助教学", "4. 设计开发研究", "中小学", "中小学生"],
+            ["教育科学学院", "基于绘本阅读的幼小双向衔接模式的建构与实践研究", "创新训练类", "校级", "E. 学前教育与特殊教育", "E1. 幼儿园课程与游戏 / B4. 教学模式改革", "4. 设计开发研究", "幼儿园/早教机构 / 中小学", "幼儿 / 中小学生"],
+            ["教育科学学院", "“玩好数学”——小学数学益智桌游的开发与实践", "创新训练类", "校级", "A. 教育技术与人工智能", "A5. 教育游戏与游戏化学习 / B1. 学科教学法创新", "4. 设计开发研究", "中小学", "中小学生"],
+            ["教育科学学院", "学前教育本科生保教能力提升路径探索——基于教卫融合课程的全称", "创新训练类", "校级", "F. 教师教育与专业成长", "F1. 师范生培养模式", "4. 设计开发研究", "大学校园", "大学生"],
+            ["教育科学学院", "“第二课堂成绩单”评价视域下的大学生志愿服务活动现状及质量提升路径研究——以南京某高校为例", "创新训练类", "校级", "D. 教育管理与政策", "D2. 教育评价改革", "3. 混合研究", "大学校园", "大学生"],
+            ["教育科学学院", "“绘梦轨迹：教科院本科生课程选择与成长指南绘本研究——以南京师范大学为例", "创新训练类", "校级", "B. 课程与教学论", "B3. 课程标准与教材分析", "4. 设计开发研究", "大学校园", "大学生"]
+        ],
+        "杭州师范大学(24年)": [
+            ["项目名称", "项目类型", "学院", "级别", "关注的方向", "具体的细分方向", "研究方法", "研究场景", "研究对象"],
+            ["慧心育童--基于脑科学的儿童学习力培育者", "创业训练项目", "经亨颐教育学院", "国创", "H. 其他新兴/交叉领域", "H3. 教育神经科学 / C2. 认知发展与学习策略", "4. 设计开发研究", "社区/家庭 / 幼儿园/早教机构", "幼儿"],
+            ["乡润童心：儿童友好型未来乡村模式创领者", "创业训练项目", "经亨颐教育学院", "国创", "G. 家庭教育与社区教育", "G4. 社区教育资源整合 / G1. 家校合作与沟通", "4. 设计开发研究", "社区/家庭", "幼儿 / 中小学生 / 家长"],
+            ["智普智创——中小学的科技知识普及和智能创造一体化先锋", "创业训练项目", "经亨颐教育学院", "国创", "A. 教育技术与人工智能", "A6. 编程教育与计算思维", "4. 设计开发研究", "中小学", "中小学生"],
+            ["九州优普：首创民族地区多模态学普平台研究", "创新训练项目", "经亨颐教育学院", "国创", "A. 教育技术与人工智能", "A1. AI辅助教学 / A2. 在线教育与混合式教学 / A3. 教育大数据与学习分析", "4. 设计开发研究", "幼儿园/早教机构 / 中小学 / 在线教育平台", "幼儿 / 中小学生 / 教师"],
+            ["数字化转型背景下小学教师数字素养的模型建构与提升路径研究", "创新训练项目", "经亨颐教育学院", "国创", "未分类", "解析失败", "解析失败", "解析失败"],
+            ["二十大背景下贿赂行为的影响因素及干预研究：来自行为实验的证据", "创新训练项目", "经亨颐教育学院", "国创", "H. 其他新兴/交叉领域", "H4. 教育哲学与伦理", "1. 量化研究", "大学校园", "大学生"],
+            ["“繁星闪烁”——基于生成式人工智能技术的ASD儿童评估指标构建及平台开发", "创新训练项目", "经亨颐教育学院", "国创", "C. 教育心理与发展", "C4. 特殊儿童心理与教育 / E4. 康复训练与辅助技术", "4. 设计开发研究", "特殊教育学校/康复机构 / 在线教育平台", "特殊教育群体"]
+        ],
+        "广西师范大学(24年)": [
+            ["所在院系", "项目类型", "项目级别", "项目类别", "项目名称", "关注的方向", "具体的细分方向", "研究方法", "研究场景", "研究对象"],
+            ["教育学部", "创新训练", "国家级", "一般项目", "奔波与坚守：乡村“候鸟型”教师的生活史研究——基于10-25位教师的考察", "F. 教师教育与专业成长", "F3. 教师情感与身份认同 / D1. 教育公平与均衡发展", "2. 质性研究", "中小学", "教师"],
+            ["教育学部", "创新训练", "国家级", "一般项目", "NASH视角下幼儿美育与非遗文化融合的路径探索——以广西非遗茶泡为例", "E. 学前教育与特殊教育", "E1. 幼儿园课程与游戏", "4. 设计开发研究", "幼儿园/早教机构", "幼儿 / 教师"],
+            ["教育学部", "创业训练", "国家级", "一般项目", "老幼互动教育剧场在社区的开发与应用", "G. 家庭教育与社区教育", "G3. 隔代教育 / G4. 社区教育资源整合", "4. 设计开发研究", "社区/家庭", "幼儿 / 其他"],
+            ["教育学部", "创新训练", "自治区级", "一般项目", "《生命教育视域下广西民俗文化资源开发与校园传承——以丧葬仪式,白裤瑶铜鼓舞和蚂拐节文化为内容》", "B. 课程与教学论", "B3. 课程标准与教材分析", "4. 设计开发研究", "中小学", "中小学生"],
+            ["教育学部", "创业训练", "自治区级", "一般项目", "自然佳———自然与人文共生教育首倡者", "H. 其他新兴/交叉领域", "H2. 环境教育与可持续发展", "4. 设计开发研究", "中小学 / 幼儿园/早教机构 / 社区/家庭", "中小学生 / 幼儿 / 家长"],
+            ["教育学部", "创新训练", "自治区级", "一般项目", "心·育实验小秘——心理与教育实验预约系统", "A. 教育技术与人工智能", "A7. 教育信息化政策与基础设施", "4. 设计开发研究", "大学校园 / 在线教育平台", "大学生 / 教师"],
+            ["教育学部", "创新训练", "自治区级", "一般项目", "《融合传统文化的趣味CSIG编程课程设计与实践》", "A. 教育技术与人工智能", "A6. 编程教育与计算思维", "4. 设计开发研究", "中小学", "中小学生"],
+            ["教育学部", "创新训练", "自治区级", "一般项目", "中草药文化与AI融合的高中生跨学科项目化学习活动设计与实践", "B. 课程与教学论", "A1. AI辅助教学 / B4. 教学模式改革", "4. 设计开发研究", "中小学", "中小学生"],
+            ["教育学部", "创新训练", "自治区级", "一般项目", "童享阳光·e路乡伴——农村留守儿童家庭复原力提升计划", "C. 教育心理与发展", "C6. 心理健康教育", "4. 设计开发研究", "社区/家庭", "中小学生 / 家长"],
+            ["教育学部", "创新训练", "自治区级", "一般项目", "桂“画”童“心”：铸牢中华民族共同体视域下小学民族文化绘本课程设计与实施", "B. 课程与教学论", "B3. 课程标准与教材分析 / B4. 教学模式改革", "4. 设计开发研究", "中小学", "中小学生"],
+            ["教育学部", "创新训练", "自治区级", "一般项目", "《广西小学铸牢中华民族共同体意识教育的典型案例与经验研究》", "H. 其他新兴/交叉领域", "H5. 跨文化教育", "2. 质性研究", "中小学", "中小学生 / 教师"],
+            ["教育学部", "创新训练", "自治区级", "一般项目", "义教阶段的技术与工程“研-学-做”项目式课程设计与实践——基于广西非遗文化传承的视角", "B. 课程与教学论", "B4. 教学模式改革 / B1. 学科教学法创新", "4. 设计开发研究", "中小学", "中小学生"],
+            ["教育学部", "创新训练", "自治区级", "一般项目", "民族文化融入幼儿绘本教育——基于家园社协同育人的实践探讨", "E. 学前教育与特殊教育", "E1. 幼儿园课程与游戏 / G1. 家校合作与沟通", "5. 行动研究", "幼儿园/早教机构 / 社区/家庭", "幼儿 / 教师 / 家长"],
+            ["教育学部", "创新训练", "自治区级", "一般项目", "壮族嘹歌文化在铸牢中华民族共同体意识中的教育功能和实现路径", "H. 其他新兴/交叉领域", "H5. 跨文化教育", "2. 质性研究", "中小学 / 社区/家庭", "中小学生 / 教师 / 家长"],
+            ["教育学部", "创新训练", "自治区级", "一般项目", "隐翼计划—基于CAC模型的中小学隐性暴力探究", "C. 教育心理与发展", "C3. 情绪与社会性发展", "4. 设计开发研究", "中小学", "中小学生"],
+            ["教育学部", "创新训练", "自治区级", "一般项目", "“疫”纸家书——疫情防控背景下借助自媒体平台促进学前儿童家庭心理健康的研究", "C. 教育心理与发展", "C6. 心理健康教育 / G2. 家庭教育指导", "4. 设计开发研究", "社区/家庭 / 在线教育平台", "幼儿 / 家长"],
+            ["教育学部", "创业训练", "自治区级", "一般项目", "基于疫情下的青年群体减脂塑形创业实践项目", "A. 教育技术与人工智能", "A2. 在线教育与混合式教学", "4. 设计开发研究", "在线教育平台", "大学生 / 其他"],
+            ["教育学部", "创业训练", "自治区级", "一般项目", "伴你“童”行亲子研学有限公司", "H. 其他新兴/交叉领域", "H1. 劳动教育与综合实践", "4. 设计开发研究", "社区/家庭 / 其他", "幼儿 / 小学生 / 家长"]
+        ],
+        "浙江大学(24年)": [
+            ["项目名称", "立项学院", "项目类别", "关注的方向", "具体的细分方向", "研究方法", "研究场景", "研究对象"],
+            ["精神病人遗体捐献法律问题研究", "光华法学院", "国创--创新训练", "H. 其他新兴/交叉领域", "H4. 教育哲学与伦理", "7. 政策/文本分析", "其他", "其他"],
+            ["基于生成式人工智能的虚拟社区优化个性化人机协同教研和学习模式研究及相关应用平台开发", "教育学院", "国创--创新训练", "A. 教育技术与人工智能", "A1. AI辅助教学 / A2. 在线教育与混合式教学", "4. 设计开发研究", "在线教育平台/网络社群", "教师 / 中小学生"],
+            ["极限飞盘运动对大学生社交外表焦虑的影响", "教育学院", "国创--创新训练", "C. 教育心理与发展", "C3. 情绪与社会性发展", "1. 量化研究", "大学校园", "大学生"],
+            ["中学时期手机使用的延迟满足对大学生手机问题使用的影响", "教育学院", "国创--创新训练", "C. 教育心理与发展", "C6. 心理健康教育", "1. 量化研究", "大学校园", "大学生"],
+            ["足球技战术分析场景下的双足uwb定位和姿态解算传感系统", "教育学院", "国创--创新训练", "A. 教育技术与人工智能", "A3. 教育大数据与学习分析", "4. 设计开发研究", "中小学 / 大学校园", "中小学生 / 大学生"],
+            ["探究布莱希特《措施》中的中国元素与间离效果", "外国语学院", "国创--创新训练", "H. 其他新兴/交叉领域", "H5. 跨文化教育", "7. 政策/文本分析", "大学校园", "其他"],
+            ["“浙大翻译家”数据库的创建与研究（1897-2023）", "外国语学院", "国创--创新训练", "H. 其他新兴/交叉领域", "H5. 跨文化教育", "2. 质性研究", "大学校园", "其他"],
+            ["《道德经》在英语世界的影响力研究——基于文化组学的视角", "外国语学院", "国创--创新训练", "H. 其他新兴/交叉领域", "H5. 跨文化教育", "1. 量化研究", "大学校园", "其他"],
+            ["双语和全英教学过程及效果的眼动研究：教师种族面孔的影响", "外国语学院", "国创--创新训练", "C. 教育心理与发展", "C2. 认知发展与学习策略 / C3. 情绪与社会性发展", "1. 量化研究", "大学校园", "大学生"],
+            ["AIGC技术在中国文学经典跨文化传播中的应用研究", "外国语学院", "国创--创新训练", "H. 其他新兴/交叉领域", "H5. 跨文化教育", "4. 设计开发研究", "大学校园 / 在线教育平台", "大学生 / 其他"],
+            ["Actg1无义突变激活遗传补偿效应因子的验证", "生命科学学院", "国创--创新训练", "H. 其他新兴/交叉领域", "H4. 教育哲学与伦理", "10. 其他/不确定", "其他", "其他"],
+            ["蛋白激酶CDK11在脂肪肉瘤中的生物学功能和创新靶向策略研究", "生命科学学院", "国创--创新训练", "H. 其他新兴/交叉领域", "H4. 教育哲学与伦理", "10. 其他/不确定", "其他", "其他"],
+            ["球孢白僵菌Grg1基因家族的生物学功能分析", "生命科学学院", "国创--创新训练", "H. 其他新兴/交叉领域", "H2. 环境教育与可持续发展", "10. 其他/不确定", "其他", "其他"],
+            ["蛛网膜下腔出血早期炎症反应中实质边界巨噬细胞调控中性粒细胞趋化入颅的机制研究", "生命科学学院", "国创--创新训练", "H. 其他新兴/交叉领域", "H4. 教育哲学与伦理", "10. 其他/不确定", "其他", "其他"],
+            ["结直肠癌血液微肽组鉴定", "生命科学学院", "国创--创新训练", "H. 其他新兴/交叉领域", "", "10. 其他/不确定", "其他", "其他"],
+            ["小鼠多组织NADs异同探究", "生命科学学院", "国创--创新训练", "H. 其他新兴/交叉领域", "H5. 跨文化教育", "10. 其他/不确定", "其他", "其他"],
+            ["野菰生活史、寄主偏好性及比较基因组学研究", "生命科学学院", "国创--创新训练", "H. 其他新兴/交叉领域", "H4. 教育哲学与伦理", "10. 其他/不确定", "其他", "其他"],
+            ["光伏发电背包", "电气工程学院", "国创--创新训练", "H. 其他新兴/交叉领域", "H2. 环境教育与可持续发展", "4. 设计开发研究", "其他", "其他"],
+            ["双向CLLC谐振变换器宽增益控制研究", "电气工程学院", "国创--创新训练", "H. 其他新兴/交叉领域", "H4. 教育哲学与伦理", "10. 其他/不确定", "其他", "其他"],
+            ["基于相变材料储热的碳化硅芯片过流能力强化方法", "电气工程学院", "国创--创新训练", "H. 其他新兴/交叉领域", "H1. 劳动教育与综合实践", "10. 其他/不确定", "其他", "其他"],
+            ["四足机器人动力学建模与关节驱动电机高性能力矩控制研究", "电气工程学院", "国创--创新训练", "A. 教育技术与人工智能", "A6. 编程教育与计算思维", "10. 其他/不确定", "其他", "其他"],
+            ["针对传感器的后门攻击设计与实现", "电气工程学院", "国创--创新训练", "H. 其他新兴/交叉领域", "H4. 教育哲学与伦理", "10. 其他/不确定", "其他", "其他"]
+        ],
+        "北京师范大学(24年)": [
+            ["部院系", "项目名称", "备注", "级别", "关注的方向", "具体的细分方向", "研究方法", "研究场景", "研究对象"],
+            ["教育学部", "灵构伴学——基于柔性机器人技术的模块化教育机器人", "创业实践项目", "国家级", "A. 教育技术与人工智能", "A6. 编程教育与计算思维 / A1. AI辅助教学", "4. 设计开发研究", "中小学", "中小学生"],
+            ["教育学部", "XRise睿思教育——聚焦中小学物理实验与职业院校仿真实验的XR内容制作服务商", "创业训练项目", "国家级", "A. 教育技术与人工智能", "A4. 虚拟现实/增强现实教育应用", "4. 设计开发研究", "中小学 / 大学校园", "中小学生 / 大学生"],
+            ["教育学部", "新声代——让每位言语障碍新生代成为新”声“代", "创业训练项目", "国家级", "E. 学前教育与特殊教育", "E4. 康复训练与辅助技术", "4. 设计开发研究", "特殊教育学校/康复机构", "特殊教育群体"],
+            ["教育学部", "“三生万卷”生命教育工作室", "创业训练项目", "国家级", "C. 教育心理与发展", "C6. 心理健康教育", "4. 设计开发研究", "中小学", "中小学生"],
+            ["教育学部", "智识手谈", "创业训练项目", "国家级", "A. 教育技术与人工智能", "A5. 教育游戏与游戏化学习", "4. 设计开发研究", "中小学 / 在线教育平台", "中小学生"],
+            ["教育学部", "灵狐用工—助力灵活岗位匹配的用工撮合解决方案", "创业训练项目", "国家级", "H. 其他新兴/交叉领域", "H1. 劳动教育与综合实践", "4. 设计开发研究", "在线教育平台/网络社群", "大学生"],
+            ["教育学部", "“屋顶的星星”——孤独症家庭社会服务组织", "创业训练项目", "国家级", "C. 教育心理与发展", "C4. 特殊儿童心理与教育", "4. 设计开发研究", "社区/家庭", "特殊教育群体 / 家长"],
+            ["教育学部", "知识网红信息源特性对青少年在线学习投入的影响：一项解释性序列研究", "创新训练", "国家级", "A. 教育技术与人工智能", "A2. 在线教育与混合式教学", "3. 混合研究", "在线教育平台/网络社群", "中小学生"],
+            ["教育学部", "父母控制与初中生学业拖延：个人成长主动性的中介作用和感知教师支持的调节效应", "创新训练", "国家级", "C. 教育心理与发展", "C1. 学习动机与engagement", "1. 量化研究", "中小学", "中小学生"],
+            ["教育学部", "基于生成式人工智能的 Python语言学习智能助手研究与开发", "创新训练", "国家级", "A. 教育技术与人工智能", "A1. AI辅助教学 / A6. 编程教育与计算思维", "4. 设计开发研究", "中小学 / 大学校园 / 在线教育平台", "中小学生 / 大学生"],
+            ["教育学部", "“电子屏幕里的未来”——社交媒体使用对青少年生涯适应力影响的混合研究", "创新训练", "市级", "C. 教育心理与发展", "C3. 情绪与社会性发展", "3. 混合研究", "中小学 / 在线教育平台", "中小学生"],
+            ["教育学部", "人工智能时代下的教师“数字鸿沟”——基于UTAUT2的研究", "创新训练", "市级", "A. 教育技术与人工智能", "A7. 教育信息化政策与基础设施", "1. 量化研究", "中小学 / 在线教育平台", "教师"],
+            ["教育学部", "数字资本视角下农村第一代大学生学业适应研究", "创新训练", "市级", "D. 教育管理与政策", "D1. 教育公平与均衡发展", "1. 量化研究", "大学校园", "大学生"],
+            ["教育学部", "现象学视角下随班就读智障学生回流的质性研究", "创新训练", "市级", "E. 学前教育与特殊教育", "E3. 特殊儿童融合教育", "2. 质性研究", "中小学 / 特殊教育学校", "特殊教育群体"],
+            ["教育学部", "Fingu对智力障碍儿童数感的干预研究", "创新训练", "市级", "C. 教育心理与发展", "C4. 特殊儿童心理与教育", "1. 量化研究", "特殊教育学校/康复机构", "特殊教育群体"],
+            ["教育学部", "马扎诺教育目标分类模式下GAI写作对大学生批判性思维的影响研究", "创新训练", "市级", "A. 教育技术与人工智能", "A1. AI辅助教学 / B2. 核心素养培养", "1. 量化研究", "大学校园", "大学生"],
+            ["教育学部", "公费师范毕业生留职意愿及其影响因素的调查研究", "创新训练", "市级", "F. 教师教育与专业成长", "F3. 教师情感与身份认同", "1. 量化研究", "中小学", "教师"],
+            ["教育学部", "解构与重建：“双减”视域下初中生自主学习评价指标体系构建与培养路径探究", "创新训练", "市级", "D. 教育管理与政策", "D2. 教育评价改革 / D5. 教育政策分析", "3. 混合研究", "中小学", "初中生"],
+            ["教育学部", "集团化办学如何有效缩小城乡教育资源差距：基于A集团的案例分析", "创新训练", "市级", "D. 教育管理与政策", "D1. 教育公平与均衡发展", "2. 质性研究", "教育行政/教研机构 / 中小学", "教育管理者 / 教师"],
+            ["教育学部", "关系欺凌与中学生抑郁形成的关系：孤独感、自尊的中介作用与反刍思维的调节效应", "创新训练", "市级", "C. 教育心理与发展", "C3. 情绪与社会性发展", "1. 量化研究", "中小学", "中小学生"],
+            ["教育学部", "民国初期绍兴会馆个案研究——以鲁迅为考察中心", "创新训练", "校级", "未分类", "解析失败", "解析失败", "解析失败"],
+            ["教育学部", "教育数字化时代下教师适应力培养与教育效能的关系研究", "创新训练", "校级", "未分类", "解析失败", "解析失败", "解析失败"],
+            ["教育学部", "父母心理控制对青少年逆反心理的影响与作用机制——基于性别差异和城乡差异视角的比较研究", "创新训练", "校级", "G. 家庭教育与社区教育", "G2. 家庭教育指导 / C3. 情绪与社会性发展", "1. 量化研究", "中小学 / 社区/家庭", "中小学生"],
+            ["教育学部", "基于AR技术的生态文明教育研究与设计", "创新训练", "校级", "A. 教育技术与人工智能", "A4. 虚拟现实/增强现实教育应用 / H2. 环境教育与可持续发展", "4. 设计开发研究", "中小学 / 其他", "中小学生"],
+            ["教育学部", "家庭科学支持对初中生科学职业期望的影响：科学能力信念的中介", "创新训练", "校级", "G. 家庭教育与社区教育", "G2. 家庭教育指导 / C1. 学习动机与engagement", "1. 量化研究", "中小学", "中小学生"],
+            ["教育学部", "《特殊教育公费师范生培养方案的优化研究——以北京师范大学为例》", "创新训练", "校级", "E. 学前教育与特殊教育", "E5. 特殊教育师资培养", "3. 混合研究", "大学校园", "大学生 / 教师"],
+            ["教育学部", "自我认同感视角下校本教研活动对新手教师职业承诺影响机制研究", "创新训练", "校级", "F. 教师教育与专业成长", "F3. 教师情感与身份认同 / F4. 教师学习共同体", "1. 量化研究", "中小学", "教师"],
+            ["教育学部", "基于 I-E-O 模型的大学生心理健康课学习收获研究——以北师大为例", "创新训练", "校级", "C. 教育心理与发展", "C6. 心理健康教育", "1. 量化研究", "大学校园", "大学生"],
+            ["教育学部", "中小学教育戏剧对学生具身道德学习的作用机制——梅洛·庞蒂的身体现象学视角", "创新训练", "校级", "B. 课程与教学论", "B1. 学科教学法创新 / B2. 核心素养培养 / B4. 教学模式改革", "4. 设计开发研究", "中小学", "中小学生"],
+            ["教育学部", "本科生保研学业压力与焦虑水平的关系研究——学业自我效能感的中介作用", "创新训练", "校级", "C. 教育心理与发展", "C1. 学习动机与engagement / C3. 情绪与社会性发展", "1. 量化研究", "大学校园", "大学生"],
+            ["教育学部", "学习者视角下混合式教师素养课程中学习动机的增强路径——基于师道云平台", "创新训练", "校级", "A. 教育技术与人工智能", "A2. 在线教育与混合式教学", "3. 混合研究", "在线教育平台 / 大学校园", "大学生 / 教师"],
+            ["教育学部", "新高考政策背景下高中生科学兴趣现状与影响因素研究", "创新训练", "校级", "D. 教育管理与政策", "D2. 教育评价改革 / C1. 学习动机与engagement", "1. 量化研究", "中小学", "中小学生"],
+            ["教育学部", "家长的限制型介入对青少年媒介素养的影响研究", "创新训练", "校级", "G. 家庭教育与社区教育", "G2. 家庭教育指导", "1. 量化研究", "社区/家庭", "中小学生 / 家长"],
+            ["教育学部", "大学生焦虑和内在动机对创造力的影响及干预研究", "创新训练", "校级", "C. 教育心理与发展", "C1. 学习动机与engagement / C3. 情绪与社会性发展", "1. 量化研究", "大学校园", "大学生"],
+            ["教育学部", "“双减”政策背景下课后延时服务现状及其对小学生学习体验的影响——基于B市某小学的个案研究", "创新训练", "校级", "D. 教育管理与政策", "D5. 教育政策分析 / D4. 教育治理与学校管理", "3. 混合研究", "中小学", "小学生 / 教师 / 教育管理者"],
+            ["教育学部", "困境与破局：校外培训新政策下影子教育的问题与治理路径探究", "创新训练", "校级", "D. 教育管理与政策", "D1. 教育公平与均衡发展 / D5. 教育政策分析", "7. 政策/文本分析", "教育行政/教研机构 / 其他", "教育管理者 / 家长/监护人 / 其他"]
+        ]
+    };
+
+    function goToPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.add('hidden'));
+        document.getElementById(pageId).classList.remove('hidden');
+    }
+
+    function goBack() { goToPage('page-home'); }
+
+    function triggerDownload(schoolName) {
+        const data = projectData[schoolName];
+        if (!data) { alert("数据缺失！"); return; }
+        let csvContent = data.map(row => row.join(',')).join('\n');
+        const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        const url = URL.createObjectURL(blob);
+        link.setAttribute("href", url);
+        link.setAttribute("download", `${schoolName}立项列表.csv`);
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
+    function openModal(id) {
+        document.getElementById(id).style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+    }
+    function closeModal(id) {
+        document.getElementById(id).style.display = 'none';
+        document.body.style.overflow = 'auto';
+    }
+
+    function goToAiPage() {
+        const iframe = document.getElementById('dify-chat-iframe');
+        iframe.src = "https://udify.app/chat/7ZE7wr4XsNwahkUQ";
+        goToPage('page-ai');
+    }
+
+    window.onload = function() {
+        goToPage('page-home');
+    }
+</script>
+</body>
+</html>
